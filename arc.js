@@ -9,8 +9,8 @@ var Coord = function(lon,lat) {
 };
 
 Coord.prototype.view = function() {
-    return String(this.lon).slice(0,4) + "," + String(this.lat).slice(0,4);
-}
+    return String(this.lon).slice(0, 4) + ',' + String(this.lat).slice(0, 4);
+};
 
 /*
  * http://en.wikipedia.org/wiki/Great-circle_distance
