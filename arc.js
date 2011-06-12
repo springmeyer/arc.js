@@ -12,6 +12,18 @@ Coord.prototype.view = function() {
     return String(this.lon).slice(0, 4) + ',' + String(this.lat).slice(0, 4);
 };
 
+Coord.prototype.antipode = function() {
+
+    var anti_lat = -1 * this.lat;
+    if (this.lon < 0) {
+        var anti_lon = 180 + this.lon;
+    } else {
+        var anti_lon = (180 - this.lon) * -1;
+    }
+    return new Coord(anti_lon, anti_lat);
+};
+
+
 /*
  * http://en.wikipedia.org/wiki/Great-circle_distance
  *
@@ -29,8 +41,11 @@ var GreatCircle = function(start,end) {
                      Math.pow(Math.sin(w / 2.0), 2);
     this.g = 2.0 * Math.asin(Math.sqrt(z));
 
-    if (this.g == Math.PI)
-        throw new Error('cannot compute intermediate points on a great circle whose endpoints are antipodal');
+    if (this.g == Math.PI) {
+        throw new Error('it appears ' + start.view() + ' and ' + end.view() + " are 'antipodal', e.g diametrically opposite, thus there is no single route but rather infinite");
+    } else if (isNaN(this.g)) {
+        throw new Error('could not calculate great circle between ' + start + ' and ' + end);
+    }
 };
 
 /*
@@ -59,9 +74,7 @@ GreatCircle.prototype.project = function(f,options) {
  * Generate points along the great circle
  */
 GreatCircle.prototype.points = function(npoints,options) {
-    if (npoints <= 1)
-        throw new Error('npoints must be greater than 1');
-    else if (npoints == 2)
+    if (npoints <= 2)
         return [this.start.lon, this.end.lat], [this.start.lon, this.end.lat];
     var delta = 1.0 / (npoints - 1);
     var f = [];
