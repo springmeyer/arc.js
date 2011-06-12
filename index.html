@@ -16,7 +16,7 @@
 <body>
     
     <div>Draw Great Circle Arcs with Leaflet 
-      <a href="https://github.com/springmeyer/arc.js"/>source code on github</a>
+      <a href="https://github.com/springmeyer/arc.js">source code on github</a>
     </div>
     
     <div id="map" style="width: 600px; height: 400px"></div>
@@ -48,7 +48,14 @@
                 var circle = new L.CircleMarker(end, 2, circleOptions);
                 map.addLayer(circle);
 
-                var greatCircle = new arc.GreatCircle(coords[0],coords[1]);
+                try {
+                    var greatCircle = new arc.GreatCircle(coords[0],coords[1]);
+                } catch (e) {
+                    // catch possible antipodes error
+                    alert(e.message);
+                    coords.length = 0;
+                    return;
+                }
                 var options = {endpoints: false, mercator: false};
                 var gc = greatCircle.points(50,options);
                 var points = [];
