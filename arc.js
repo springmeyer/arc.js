@@ -8,6 +8,9 @@ var Coord = function(lon,lat) {
     this.y = D2R * lat;
 };
 
+Coord.prototype.view = function() {
+    return String(this.lon).slice(0,4) + "," + String(this.lat).slice(0,4);
+}
 
 /*
  * http://en.wikipedia.org/wiki/Great-circle_distance
@@ -110,5 +113,13 @@ GreatCircle.prototype.geoJSON = function(npoints,options) {
 
 };
 
-module.exports.GreatCircle = GreatCircle;
-module.exports.Coord = Coord;
+if (typeof window === 'undefined') {
+  // nodejs
+  module.exports.GreatCircle = GreatCircle;
+  module.exports.Coord = Coord;
+} else {
+  // browser
+  var arc = {};
+  arc.Coord = Coord;
+  arc.GreatCircle = GreatCircle;
+}
