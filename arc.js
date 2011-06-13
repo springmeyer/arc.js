@@ -23,7 +23,8 @@ Coord.prototype.antipode = function() {
     return new Coord(anti_lon, anti_lat);
 };
 
-var Arc = function() {
+var Arc = function(name) {
+    this.name = name;
     this.coords = [];
     this.length = 0;
 };
@@ -35,7 +36,7 @@ Arc.prototype.move_to = function(coord) {
 
 Arc.prototype.json = function() {
     return {'geometry': { 'type': 'LineString', 'coordinates': this.coords },
-            'type': 'Feature', 'properties': {'name': 'great circle arc'}
+            'type': 'Feature', 'properties': {'name': this.name}
            };
 };
 
@@ -45,17 +46,18 @@ Arc.prototype.wkt = function() {
     this.coords.forEach(function(c,idx) {
         wkt += c[0] + ' ' + c[1] + ',';
     });
-    return wkt.substring(0,wkt.length-1) + ')';
+    return wkt.substring(0, wkt.length - 1) + ')';
 };
 
 /*
  * http://en.wikipedia.org/wiki/Great-circle_distance
  *
  */
-var GreatCircle = function(start,end) {
+var GreatCircle = function(start,end,name) {
 
     this.start = start;
     this.end = end;
+    this.name = name || 'great circle arc';
 
     var w = this.start.x - this.end.x;
     var h = this.start.y - this.end.y;
@@ -98,10 +100,10 @@ GreatCircle.prototype.project = function(f,options) {
  * Generate points along the great circle
  */
 GreatCircle.prototype.Arc = function(npoints,options) {
-    var arc = new Arc();
+    var arc = new Arc(this.name);
     if (npoints <= 2) {
-        arc.move_to([this.start.lon,this.start.lat]);
-        arc.move_to([this.end.lon,this.end.lat]);
+        arc.move_to([this.start.lon, this.start.lat]);
+        arc.move_to([this.end.lon, this.end.lat]);
     } else {
         var delta = 1.0 / (npoints - 1);
         for (i = 0; i < npoints; i++) {
@@ -118,7 +120,7 @@ if (typeof window === 'undefined') {
   module.exports.Coord = Coord;
   module.exports.Arc = Arc;
   module.exports.GreatCircle = GreatCircle;
-  
+
 } else {
   // browser
   var arc = {};

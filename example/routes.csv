@@ -1,0 +1,4 @@
+lon1, lat1, lon2, lat1, name
+-122, 48,   -77,  39,   "Seattle to DC"
+-122, 48,   0,    51,   "Seattle to London"
+-77,  39,   0,    51,   "DC to London"
