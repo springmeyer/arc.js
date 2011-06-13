@@ -30,6 +30,8 @@
         
         map.setView(new L.LatLng(30, -50), 2).addLayer(osm);
         
+        // number of intermediate arc points
+        var npoints = 50;
         var coords = [];
         
         map.on('click', onMapClick);
@@ -56,11 +58,11 @@
                     coords.length = 0;
                     return;
                 }
-                var options = {endpoints: false, mercator: false};
-                var gc = greatCircle.points(50,options);
+                
+                var gc = greatCircle.Arc(npoints);
                 var points = [];
-                for (i=0;i<gc.length;i++) {
-                    var c = gc[i];
+                for (i=0;i<npoints;i++) {
+                    var c = gc.coords[i];
                     points.push(new L.LatLng(c[1], c[0]));
                 }
                 var line = new L.Polyline(points);
@@ -68,7 +70,7 @@
                 setTimeout(function() {
                     map.addLayer(line);
                       coords.length = 0;
-                },100)
+                },0)
             }
         }
                                 

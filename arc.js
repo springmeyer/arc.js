@@ -23,6 +23,30 @@ Coord.prototype.antipode = function() {
     return new Coord(anti_lon, anti_lat);
 };
 
+var Arc = function() {
+    this.coords = [];
+    this.length = 0;
+};
+
+Arc.prototype.move_to = function(coord) {
+    this.length++;
+    this.coords.push(coord);
+};
+
+Arc.prototype.json = function() {
+    return {'geometry': { 'type': 'LineString', 'coordinates': this.coords },
+            'type': 'Feature', 'properties': {'name': 'great circle arc'}
+           };
+};
+
+Arc.prototype.wkt = function() {
+    var wkt = 'LINESTRING(';
+    var that = this;
+    this.coords.forEach(function(c,idx) {
+        wkt += c[0] + ' ' + c[1] + ',';
+    });
+    return wkt.substring(0,wkt.length-1) + ')';
+};
 
 /*
  * http://en.wikipedia.org/wiki/Great-circle_distance
@@ -73,66 +97,32 @@ GreatCircle.prototype.project = function(f,options) {
 /*
  * Generate points along the great circle
  */
-GreatCircle.prototype.points = function(npoints,options) {
-    if (npoints <= 2)
-        return [this.start.lon, this.end.lat], [this.start.lon, this.end.lat];
-    var delta = 1.0 / (npoints - 1);
-    var f = [];
-    for (i = 0; i < npoints; i++) {
-        f.push(delta * i);
-    }
-    var coords = [];
-    for (i = 0; i < f.length; i++) {
-        coords.push(this.project(f[i], options));
-    }
-    return coords;
-};
-
-/*
- * Dump out as GeoJSON linestring, optionally with endpoints
- */
-GreatCircle.prototype.geoJSON = function(npoints,options) {
-    var coords = this.points(npoints, options);
-    var fc = { 'type': 'FeatureCollection',
-               'features': [
-                  {'geometry': { 'type': 'LineString', 'coordinates': coords },
-                                 'type': 'Feature', 'properties': {'name': 'route'}}
-               ]
-             };
-    if (options && options.mercator) {
-        fc.crs = { 'type': 'name',
-                   'properties': {
-                   'href': 'http://spatialreference.org/ref/sr-org/6/proj4/',
-                   'type': 'proj4'
-                    }
-                 };
+GreatCircle.prototype.Arc = function(npoints,options) {
+    var arc = new Arc();
+    if (npoints <= 2) {
+        arc.move_to([this.start.lon,this.start.lat]);
+        arc.move_to([this.end.lon,this.end.lat]);
     } else {
-        fc.crs = { 'type': 'name',
-                   'properties': {
-                   'name': 'urn:ogc:def:crs:OGC:1.3:CRS84'
-                    }
-                 };
+        var delta = 1.0 / (npoints - 1);
+        for (i = 0; i < npoints; i++) {
+            var step = delta * i;
+            arc.move_to(this.project(step, options));
+        }
     }
-    if (options && options.endpoints) {
-        var start = {'geometry': { 'type': 'Point', 'coordinates': coords[0]},
-                       'type': 'Feature', 'properties': {'name': 'start'}};
-        var end = {'geometry': { 'type': 'Point', 'coordinates': coords[coords.length - 1]},
-                       'type': 'Feature', 'properties': {'name': 'end'}};
-        fc.features.push(start);
-        fc.features.push(end);
-    }
-
-    return fc;
-
+    return arc;
 };
+
 
 if (typeof window === 'undefined') {
   // nodejs
-  module.exports.GreatCircle = GreatCircle;
   module.exports.Coord = Coord;
+  module.exports.Arc = Arc;
+  module.exports.GreatCircle = GreatCircle;
+  
 } else {
   // browser
   var arc = {};
   arc.Coord = Coord;
+  arc.Arc = Arc;
   arc.GreatCircle = GreatCircle;
 }
