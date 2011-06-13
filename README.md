@@ -42,21 +42,18 @@ intermediate coordinate pairs.
 
 You can then serialize to a GeoJSON geometry format:
 
-    var json = line.json();
-    console.log(JSON.stringify(json));
-
-Which should print:
-
-    {"name":"Seattle to DC","coords":[[-122,48.00000000000001],[-112.06161978373486,47.7241672604096],[-102.38404317022653,46.60813199882492],[-93.22718895342909,44.716217302635705],[-84.74823988299501,42.14415510795357],[-77,38.99999999999999]],"length":6}
+    > line.json();
+    { geometry: 
+       { type: 'LineString',
+         coordinates: [ [Object], [Object], [Object], [Object], [Object], [Object] ] },
+      type: 'Feature',
+      properties: { name: 'Seattle to DC' } }
     
 Or to WKT (Well known text):
 
-    console.log(line.wkt());
-
-Which should print:
-
-    LINESTRING(-122 48.00000000000001,-112.06161978373486 47.7241672604096,-102.38404317022653 46.60813199882492,-93.22718895342909 44.716217302635705,-84.74823988299501 42.14415510795357,-77 38.99999999999999)
+    > line.wkt();
+    'LINESTRING(-122 48.00000000000001,-112.06161978373486 47.7241672604096,-102.38404317022653 46.60813199882492,-93.22718895342909 44.716217302635705,-84.74823988299501 42.14415510795357,-77 38.99999999999999)'
     
-It is then up to you to add these geometries to create fully fledged geodata. See the examples/ directory
-for sample code to create full GeoJSON feature classes.
+It is then up to you to add up these geometries to create fully fledged geodata. See the examples/ directory
+for sample code to create full a GeoJSON file from multiple routes.
 
