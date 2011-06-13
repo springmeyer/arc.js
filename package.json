@@ -1,0 +1,28 @@
+{
+  "name": "arc",
+  "description": "draw great circle arcs",
+  "url": "https://github.com/springmeyer/arc.js",
+  "keywords": [
+    "maps",
+    "spherical",
+    "globe",
+    "rhumb line",
+    "crow flies",
+    "great circle"
+  ],
+  "contributors": [
+    "Dane Springmeyer <dane@dbsgeo.com>"
+  ],
+  "version": "0.0.0",
+  "licenses": [{
+    "type": "BSD"
+  }],
+  "main": "./index",
+  "engines": {
+    "node": ">=0.4.0"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+  }
+}
