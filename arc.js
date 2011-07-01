@@ -23,8 +23,8 @@ Coord.prototype.antipode = function() {
     return new Coord(anti_lon, anti_lat);
 };
 
-var Arc = function(name) {
-    this.name = name;
+var Arc = function(properties) {
+    this.properties = properties || {};
     this.coords = [];
     this.length = 0;
 };
@@ -36,7 +36,7 @@ Arc.prototype.move_to = function(coord) {
 
 Arc.prototype.json = function() {
     return {'geometry': { 'type': 'LineString', 'coordinates': this.coords },
-            'type': 'Feature', 'properties': {'name': this.name}
+            'type': 'Feature', 'properties': this.properties
            };
 };
 
@@ -53,11 +53,11 @@ Arc.prototype.wkt = function() {
  * http://en.wikipedia.org/wiki/Great-circle_distance
  *
  */
-var GreatCircle = function(start,end,name) {
+var GreatCircle = function(start,end,properties) {
 
     this.start = start;
     this.end = end;
-    this.name = name || 'great circle arc';
+    this.properties = properties || {};
 
     var w = this.start.x - this.end.x;
     var h = this.start.y - this.end.y;
@@ -100,7 +100,7 @@ GreatCircle.prototype.project = function(f,options) {
  * Generate points along the great circle
  */
 GreatCircle.prototype.Arc = function(npoints,options) {
-    var arc = new Arc(this.name);
+    var arc = new Arc(this.properties);
     if (npoints <= 2) {
         arc.move_to([this.start.lon, this.start.lat]);
         arc.move_to([this.end.lon, this.end.lat]);
