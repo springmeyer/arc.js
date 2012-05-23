@@ -21,6 +21,13 @@
     <br />
     <input type='range' id='rotate' min=0 max=314 />
     rotate - the amount each exit point rotates around the origin
+    <br />
+    input
+    <textarea id='input'></textarea>
+    <br />
+    output
+    <textarea id='output'></textarea>
+    <button id='load_from_input'>load from input</button>
     </div>
     <script>
       var po = org.polymaps;
@@ -56,10 +63,16 @@
 
       var espread = document.getElementById('spread');
       var erotate = document.getElementById('rotate');
+      var eload = document.getElementById('load_from_input');
+      var einput = document.getElementById('input');
+      var eoutput = document.getElementById('output');
 
       po.queue.json('bezier.geojson', function(gj) {
-        var overlaps = {};
+        bindgj(gj);
+      });
 
+      function bindgj(gj) {
+        var overlaps = {};
         for (var i = 0; i < gj.features.length; i++) {
           var count = 0;
           if (overlaps[gj.features[i].geometry.coordinates.join(',')] === undefined) {
@@ -83,20 +96,30 @@
               }
             };
 
-            // 0, 1, 2, 3, 4, 5
-            // 0, -1, 1, -2, 2
-            var turn = Math.ceil(x._count / 2) * ((x._count % 2) ? 1 : -1)
-              / (overlaps[x._idx] / 2);
-            f.geometry.coordinates = interpolate_rotate(f.geometry.coordinates, turn * rotate, spread);
-            f.geometry.coordinates = bezier(f.geometry.coordinates);
+            if (x._count) {
+              // 0, 1, 2, 3, 4, 5
+              // 0, -1, 1, -2, 2
+              var turn = Math.ceil(x._count / 2) * ((x._count % 2) ? 1 : -1)
+                / (overlaps[x._idx] / 2);
+              f.geometry.coordinates = interpolate_rotate(f.geometry.coordinates, turn * rotate, spread);
+              f.geometry.coordinates = bezier(f.geometry.coordinates);
+            } else {
+              f.geometry.coordinates = f.geometry.coordinates;
+            }
             return f;
           });
           lines.features(feat);
+          eoutput.value = JSON.stringify({type: 'FeatureCollection', features: feat });
         }
         espread.onchange = refeature;
         erotate.onchange = refeature;
         refeature();
-      });
+      }
+
+      eload.onclick = function() {
+        var gj = JSON.parse(einput.value);
+        bindgj(gj);
+      }
     </script>
 </body>
 </html>
