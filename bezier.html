@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Draw Great Circle Arcs with Leaflet</title>
+    <meta charset="utf-8" />
+    <script src='polymaps.js'></script>
+    <script src='bezier.js'></script>
+    <style>
+      path {
+        stroke:#2fa;
+        fill:transparent;
+      }
+    </style>
+</head>
+<body>
+    <div style="padding:20px;">
+      <p><a href="https://github.com/springmeyer/arc.js">source code on github</a></p>
+    <div id="map" style="width: 800px; height: 600px"></div>
+    <input type='range' id='spread' min=0 max=70 />
+    <input type='range' id='rotate' min=0 max=314 />
+    </div>
+    <script>
+      var po = org.polymaps;
+
+      var map = po.map()
+          .container(document.getElementById("map").appendChild(po.svg("svg")))
+          .zoomRange([0, 9])
+          .zoom(3)
+          .center({ lat: 0, lon: 0 })
+          .add(po.image().url("http://c.tiles.mapbox.com/v3/tmcw.map-hehqnmda/{Z}/{X}/{Y}.png"))
+          .add(po.interact());
+
+      var lines = po.geoJson();
+
+      map.add(lines);
+
+      function interpolate_rotate(coordinates, rotate, spread) {
+        var angle = rotate + Math.atan2(
+          coordinates[0][1] - coordinates[0][1],
+          coordinates[1][1] - coordinates[1][1]);
+        var addone = [
+          spread * Math.cos(angle) + coordinates[0][0],
+          spread * Math.sin(angle) + coordinates[0][1]];
+        var addtwo = [
+          spread * Math.cos(-angle + Math.PI) + coordinates[1][0],
+          spread * Math.sin(-angle + Math.PI) + coordinates[1][1]];
+        return [
+          coordinates[0],
+          addone,
+          addtwo,
+          coordinates[1]];
+      }
+
+      var espread = document.getElementById('spread');
+      var erotate = document.getElementById('rotate');
+
+      po.queue.json('bezier.geojson', function(gj) {
+        var overlaps = {};
+
+        for (var i = 0; i < gj.features.length; i++) {
+          var count = 0;
+          if (overlaps[gj.features[i].geometry.coordinates.join(',')] === undefined) {
+            count = overlaps[gj.features[i].geometry.coordinates.join(',')] = 0;
+          } else {
+            count = ++overlaps[gj.features[i].geometry.coordinates.join(',')];
+          }
+          gj.features[i]._count = count;
+        }
+
+        refeature = function() {
+          var spread = espread.value;
+          var rotate = erotate.value / 50;
+          var feat = gj.features.map(function(x) {
+            var f = {
+              'type': 'Feature',
+              'geometry': {
+                'type': 'LineString',
+                'coordinates': x.geometry.coordinates.slice()
+              }
+            };
+            f.geometry.coordinates = interpolate_rotate(f.geometry.coordinates, x._count * rotate, spread);
+            f.geometry.coordinates = bezier(f.geometry.coordinates);
+            return f;
+          });
+          lines.features(feat);
+        }
+        espread.onchange = refeature;
+        erotate.onchange = refeature;
+        refeature();
+      });
+    </script>
+</body>
+</html>
