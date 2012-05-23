@@ -86,7 +86,7 @@
             // 0, 1, 2, 3, 4, 5
             // 0, -1, 1, -2, 2
             var turn = Math.ceil(x._count / 2) * ((x._count % 2) ? 1 : -1)
-              / overlaps[x._idx];
+              / (overlaps[x._idx] / 2);
             f.geometry.coordinates = interpolate_rotate(f.geometry.coordinates, turn * rotate, spread);
             f.geometry.coordinates = bezier(f.geometry.coordinates);
             return f;
