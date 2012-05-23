@@ -17,7 +17,10 @@
       <p><a href="https://github.com/springmeyer/arc.js">source code on github</a></p>
     <div id="map" style="width: 800px; height: 600px"></div>
     <input type='range' id='spread' min=0 max=70 />
+    spread - the amount that control points are spread around origins
+    <br />
     <input type='range' id='rotate' min=0 max=314 />
+    rotate - the amount each exit point rotates around the origin
     </div>
     <script>
       var po = org.polymaps;
@@ -64,12 +67,13 @@
           } else {
             count = ++overlaps[gj.features[i].geometry.coordinates.join(',')];
           }
+          gj.features[i]._idx = gj.features[i].geometry.coordinates.join(',');
           gj.features[i]._count = count;
         }
 
         refeature = function() {
           var spread = espread.value;
-          var rotate = erotate.value / 50;
+          var rotate = erotate.value / 100;
           var feat = gj.features.map(function(x) {
             var f = {
               'type': 'Feature',
@@ -78,7 +82,12 @@
                 'coordinates': x.geometry.coordinates.slice()
               }
             };
-            f.geometry.coordinates = interpolate_rotate(f.geometry.coordinates, x._count * rotate, spread);
+
+            // 0, 1, 2, 3, 4, 5
+            // 0, -1, 1, -2, 2
+            var turn = Math.ceil(x._count / 2) * ((x._count % 2) ? 1 : -1)
+              / overlaps[x._idx];
+            f.geometry.coordinates = interpolate_rotate(f.geometry.coordinates, turn * rotate, spread);
             f.geometry.coordinates = bezier(f.geometry.coordinates);
             return f;
           });
