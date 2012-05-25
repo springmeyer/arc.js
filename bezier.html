@@ -4,11 +4,17 @@
     <title>Draw Great Circle Arcs with Leaflet</title>
     <meta charset="utf-8" />
     <script src='polymaps.js'></script>
+    <script src='sphericalmercator.js'></script>
     <script src='bezier.js'></script>
     <style>
       path {
         stroke:#2fa;
         fill:transparent;
+      }
+      body {
+        margin:40px auto;
+        width:800px;
+        font:14px/20px 'Helvetica';
       }
     </style>
 </head>
@@ -16,7 +22,7 @@
     <div style="padding:20px;">
       <p><a href="https://github.com/springmeyer/arc.js">source code on github</a></p>
     <div id="map" style="width: 800px; height: 600px"></div>
-    <input type='range' id='spread' min=0 max=70 />
+    <input type='range' id='spread' min=0 max=7000000 />
     spread - the amount that control points are spread around origins
     <br />
     <input type='range' id='rotate' min=0 max=314 />
@@ -71,6 +77,8 @@
         bindgj(gj);
       });
 
+      var sm = new SphericalMercator();
+
       function bindgj(gj) {
         var overlaps = {};
         for (var i = 0; i < gj.features.length; i++) {
@@ -96,15 +104,21 @@
               }
             };
 
+            for (var i = 0; i < f.geometry.coordinates.length; i++) {
+              f.geometry.coordinates[i] = sm.forward(f.geometry.coordinates[i]);
+            }
+
             if (x._count) {
-              // 0, 1, 2, 3, 4, 5
-              // 0, -1, 1, -2, 2
               var turn = Math.ceil(x._count / 2) * ((x._count % 2) ? 1 : -1)
                 / (overlaps[x._idx] / 2);
               f.geometry.coordinates = interpolate_rotate(f.geometry.coordinates, turn * rotate, spread);
               f.geometry.coordinates = bezier(f.geometry.coordinates);
             } else {
               f.geometry.coordinates = f.geometry.coordinates;
+            }
+
+            for (var i = 0; i < f.geometry.coordinates.length; i++) {
+              f.geometry.coordinates[i] = sm.inverse(f.geometry.coordinates[i]);
             }
             return f;
           });

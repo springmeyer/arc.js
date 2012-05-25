@@ -1,29 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Draw Great Circle Arcs with Leaflet</title>
+    <title>arc.js</title>
     <meta charset="utf-8" />
-    
     <link rel="stylesheet" href="http://leaflet.cloudmade.com/dist/leaflet.css" />
     <!--[if lte IE 8]><link rel="stylesheet" href="../dist/leaflet.ie.css" /><![endif]-->
-
     <script src="http://leaflet.cloudmade.com/dist/leaflet.js"></script>
-    
     <script src="./arc.js"></script>
-
+    <style>
+      body {
+        margin:40px auto;
+        width:800px;
+        font:14px/20px 'Helvetica';
+      }
+    </style>
 </head>
-
 <body>
-    
-    <div style="padding:20px;">
-      <h3>Draw Great Circle Arcs with Leaflet</h3> 
+    <div>
+      <h3>Arc.js with Leaflet</h3> 
       <p>Single clicks on the map will plot points. Once you have drawn two points a great circle arc (curved path) should automatically be drawn between the first point and the second.</p>
       <p><a href="https://github.com/springmeyer/arc.js">source code on github</a></p>
-    
-    <div id="map" style="width: 600px; height: 400px"></div>
-
+    <div id="map" style="width: 800px; height: 400px"></div>
     </div>
-
     <script>
         var map = new L.Map('map');
         
@@ -64,10 +62,11 @@
                 
                 var gc = greatCircle.Arc(npoints);
                 var points = [];
-                for (i=0;i<npoints;i++) {
+                for (i = 0; i < npoints; i++) {
                     var c = gc.coords[i];
                     points.push(new L.LatLng(c[1], c[0]));
                 }
+
                 var line = new L.Polyline(points);
                 line.bindPopup("great circle from " + coords[0].view() + " to " + coords[1].view());
                 setTimeout(function() {
@@ -83,7 +82,5 @@
           draw(coords);
         }
     </script>
-
 </body>
-
 </html>
