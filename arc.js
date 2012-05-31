@@ -102,7 +102,7 @@ var GreatCircle = function(start,end,properties) {
 /*
  * http://williams.best.vwh.net/avform.htm#Intermediate
  */
-GreatCircle.prototype.project = function(f,options) {
+GreatCircle.prototype.interpolate = function(f) {
     var A = Math.sin((1 - f) * this.g) / Math.sin(this.g);
     var B = Math.sin(f * this.g) / Math.sin(this.g);
     var x = A * Math.cos(this.start.y) * Math.cos(this.start.x) + B * Math.cos(this.end.y) * Math.cos(this.end.x);
@@ -110,14 +110,7 @@ GreatCircle.prototype.project = function(f,options) {
     var z = A * Math.sin(this.start.y) + B * Math.sin(this.end.y);
     var lat = R2D * Math.atan2(z, Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
     var lon = R2D * Math.atan2(y, x);
-    if (options && options.mercator) {
-        x = lon * 20037508.34 / 180;
-        y = Math.log(Math.tan((90 + lat) * Math.PI / 360)) / (Math.PI / 180);
-        y = y * 20037508.34 / 180;
-        return [x, y];
-    } else {
-        return [lon, lat];
-    }
+    return [lon, lat];
 };
 
 
@@ -135,7 +128,7 @@ GreatCircle.prototype.Arc = function(npoints,options) {
         var delta = 1.0 / (npoints - 1);
         for (i = 0; i < npoints; i++) {
             var step = delta * i;
-            line.move_to(this.project(step, options));
+            line.move_to(this.interpolate(step));
         }
     }
     return arc;
