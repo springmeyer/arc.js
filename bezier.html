@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Draw Great Circle Arcs with Leaflet</title>
+    <meta charset="utf-8" />
+    <script src='polymaps.js'></script>
+    <script src='sphericalmercator.js'></script>
+    <script src='bezier.js'></script>
+    <style>
+      path {
+        stroke:#2fa;
+        fill:transparent;
+      }
+      body {
+        margin:40px auto;
+        width:800px;
+        font:14px/20px 'Helvetica';
+      }
+    </style>
+</head>
+<body>
+    <div style="padding:20px;">
+      <p><a href="https://github.com/springmeyer/arc.js">source code on github</a></p>
+    <div id="map" style="width: 800px; height: 600px"></div>
+    <input type='range' id='spread' min=0 max=7000000 />
+    spread - the amount that control points are spread around origins
+    <br />
+    <input type='range' id='rotate' min=0 max=314 />
+    rotate - the amount each exit point rotates around the origin
+    <br />
+    input
+    <textarea id='input'></textarea>
+    <br />
+    output
+    <textarea id='output'></textarea>
+    <button id='load_from_input'>load from input</button>
+    </div>
+    <script>
+      var po = org.polymaps;
+
+      var map = po.map()
+          .container(document.getElementById("map").appendChild(po.svg("svg")))
+          .zoomRange([0, 9])
+          .zoom(3)
+          .center({ lat: 0, lon: 0 })
+          .add(po.image().url("http://c.tiles.mapbox.com/v3/tmcw.map-cx8atc2i/{Z}/{X}/{Y}.png"))
+          .add(po.interact());
+
+      var lines = po.geoJson();
+
+      map.add(lines);
+
+      function interpolate_rotate(coordinates, rotate, spread) {
+        var angle = rotate + Math.atan2(
+          coordinates[0][1] - coordinates[0][1],
+          coordinates[1][1] - coordinates[1][1]);
+        var addone = [
+          spread * Math.cos(angle) + coordinates[0][0],
+          spread * Math.sin(angle) + coordinates[0][1]];
+        var addtwo = [
+          spread * Math.cos(-angle + Math.PI) + coordinates[1][0],
+          spread * Math.sin(-angle + Math.PI) + coordinates[1][1]];
+        return [
+          coordinates[0],
+          addone,
+          addtwo,
+          coordinates[1]];
+      }
+
+      var espread = document.getElementById('spread');
+      var erotate = document.getElementById('rotate');
+      var eload = document.getElementById('load_from_input');
+      var einput = document.getElementById('input');
+      var eoutput = document.getElementById('output');
+
+      po.queue.json('bezier.geojson', function(gj) {
+        bindgj(gj);
+      });
+
+      var sm = new SphericalMercator();
+
+      function bindgj(gj) {
+        var overlaps = {};
+        for (var i = 0; i < gj.features.length; i++) {
+          var count = 0;
+          if (overlaps[gj.features[i].geometry.coordinates.join(',')] === undefined) {
+            count = overlaps[gj.features[i].geometry.coordinates.join(',')] = 0;
+          } else {
+            count = ++overlaps[gj.features[i].geometry.coordinates.join(',')];
+          }
+          gj.features[i]._idx = gj.features[i].geometry.coordinates.join(',');
+          gj.features[i]._count = count;
+        }
+
+        refeature = function() {
+          var spread = espread.value;
+          var rotate = erotate.value / 100;
+          var feat = gj.features.map(function(x) {
+            var f = {
+              'type': 'Feature',
+              'geometry': {
+                'type': 'LineString',
+                'coordinates': x.geometry.coordinates.slice()
+              }
+            };
+
+            for (var i = 0; i < f.geometry.coordinates.length; i++) {
+              f.geometry.coordinates[i] = sm.forward(f.geometry.coordinates[i]);
+            }
+
+            if (x._count) {
+              var turn = Math.ceil(x._count / 2) * ((x._count % 2) ? 1 : -1)
+                / (overlaps[x._idx] / 2);
+              f.geometry.coordinates = interpolate_rotate(f.geometry.coordinates, turn * rotate, spread);
+              f.geometry.coordinates = bezier(f.geometry.coordinates);
+            } else {
+              f.geometry.coordinates = f.geometry.coordinates;
+            }
+
+            for (var i = 0; i < f.geometry.coordinates.length; i++) {
+              f.geometry.coordinates[i] = sm.inverse(f.geometry.coordinates[i]);
+            }
+            return f;
+          });
+          lines.features(feat);
+          eoutput.value = JSON.stringify({type: 'FeatureCollection', features: feat });
+        }
+        espread.onchange = refeature;
+        erotate.onchange = refeature;
+        refeature();
+      }
+
+      eload.onclick = function() {
+        var gj = JSON.parse(einput.value);
+        bindgj(gj);
+      }
+    </script>
+</body>
+</html>
