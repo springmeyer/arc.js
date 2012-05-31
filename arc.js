@@ -23,30 +23,55 @@ Coord.prototype.antipode = function() {
     return new Coord(anti_lon, anti_lat);
 };
 
-var Arc = function(properties) {
-    this.properties = properties || {};
+var LineString = function() {
     this.coords = [];
     this.length = 0;
 };
 
-Arc.prototype.move_to = function(coord) {
+LineString.prototype.move_to = function(coord) {
     this.length++;
     this.coords.push(coord);
 };
 
-Arc.prototype.json = function() {
-    return {'geometry': { 'type': 'LineString', 'coordinates': this.coords },
-            'type': 'Feature', 'properties': this.properties
-           };
+var Arc = function(properties) {
+    this.properties = properties || {};
+    this.geometries = []
 };
 
+
+Arc.prototype.json = function() {
+    if (this.geometries.length <= 0) {
+        return {'geometry': { 'type': 'LineString', 'coordinates': null },
+                'type': 'Feature', 'properties': this.properties
+               };
+    } else if (this.geometries.length == 1) {
+        return {'geometry': { 'type': 'LineString', 'coordinates': this.geometries[0].coords },
+                'type': 'Feature', 'properties': this.properties
+               };
+    } else {
+        var multiline = []
+        for (i = 0; i < this.geometries.length; i++) {
+            multiline.push(this.geometries[i].coords);
+        }
+        return {'geometry': { 'type': 'MultiLineString', 'coordinates': multiline },
+                'type': 'Feature', 'properties': this.properties
+               };
+    }
+};
+
+
+// TODO - output proper multilinestring
 Arc.prototype.wkt = function() {
-    var wkt = 'LINESTRING(';
-    var that = this;
-    this.coords.forEach(function(c,idx) {
-        wkt += c[0] + ' ' + c[1] + ',';
-    });
-    return wkt.substring(0, wkt.length - 1) + ')';
+    var wkt_string = '';
+    for (i = 0; i < this.geometries.length; i++) {
+        var wkt = 'LINESTRING(';
+        var that = this;
+        this.geometries[i].coords.forEach(function(c,idx) {
+            wkt += c[0] + ' ' + c[1] + ',';
+        });
+        wkt_string += wkt.substring(0, wkt.length - 1) + ')';
+    }
+    return wkt_string;
 };
 
 /*
@@ -101,14 +126,16 @@ GreatCircle.prototype.project = function(f,options) {
  */
 GreatCircle.prototype.Arc = function(npoints,options) {
     var arc = new Arc(this.properties);
+    var line = new LineString();
+    arc.geometries.push(line);
     if (npoints <= 2) {
-        arc.move_to([this.start.lon, this.start.lat]);
-        arc.move_to([this.end.lon, this.end.lat]);
+        line.move_to([this.start.lon, this.start.lat]);
+        line.move_to([this.end.lon, this.end.lat]);
     } else {
         var delta = 1.0 / (npoints - 1);
         for (i = 0; i < npoints; i++) {
             var step = delta * i;
-            arc.move_to(this.project(step, options));
+            line.move_to(this.project(step, options));
         }
     }
     return arc;
