@@ -38,7 +38,6 @@ var Arc = function(properties) {
     this.geometries = []
 };
 
-
 Arc.prototype.json = function() {
     if (this.geometries.length <= 0) {
         return {'geometry': { 'type': 'LineString', 'coordinates': null },
@@ -59,17 +58,19 @@ Arc.prototype.json = function() {
     }
 };
 
-
 // TODO - output proper multilinestring
 Arc.prototype.wkt = function() {
     var wkt_string = '';
     for (i = 0; i < this.geometries.length; i++) {
-        var wkt = 'LINESTRING(';
-        var that = this;
-        this.geometries[i].coords.forEach(function(c,idx) {
-            wkt += c[0] + ' ' + c[1] + ',';
-        });
-        wkt_string += wkt.substring(0, wkt.length - 1) + ')';
+        if (this.geometries[i].coords.length === 0) {
+            return 'LINESTRING(empty)';
+        } else {
+            var wkt = 'LINESTRING(';
+            this.geometries[i].coords.forEach(function(c,idx) {
+                wkt += c[0] + ' ' + c[1] + ',';
+            });
+            wkt_string += wkt.substring(0, wkt.length - 1) + ')';
+        }
     }
     return wkt_string;
 };
@@ -114,26 +115,132 @@ GreatCircle.prototype.interpolate = function(f) {
 };
 
 
+
 /*
  * Generate points along the great circle
  */
 GreatCircle.prototype.Arc = function(npoints,options) {
-    var arc = new Arc(this.properties);
-    var line = new LineString();
-    arc.geometries.push(line);
+    var first_pass = [];
+    //var minx = 0;
+    //var maxx = 0;
     if (npoints <= 2) {
-        line.move_to([this.start.lon, this.start.lat]);
-        line.move_to([this.end.lon, this.end.lat]);
+        first_pass.push([this.start.lon, this.start.lat]);
+        first_pass.push([this.end.lon, this.end.lat]);
     } else {
         var delta = 1.0 / (npoints - 1);
-        for (i = 0; i < npoints; i++) {
+        for (var i = 0; i < npoints; i++) {
             var step = delta * i;
-            line.move_to(this.interpolate(step));
+            var pair = this.interpolate(step);
+            //minx = Math.min(minx,pair[0]);
+            //maxx = Math.max(maxx,pair[0]);
+            first_pass.push(pair);
+        }
+    }
+    /* partial port of dateline handling from:
+      gdal/ogr/ogrgeometryfactory.cpp
+
+      TODO - does not handle all wrapping scenarios yet
+    */
+    var bHasBigDiff = false;
+    var dfMaxSmallDiffLong = 0;
+    for (var i = 1; i < first_pass.length; i++) {
+        //if (minx > 170 && maxx > 180) {
+        // }
+        var dfPrevX = first_pass[i-1][0];
+        var dfX = first_pass[i][0];
+        var dfDiffLong = Math.abs(dfX - dfPrevX);
+        if (dfDiffLong > 350 &&
+            ((dfX > 170 && dfPrevX < -170) || (dfPrevX > 170 && dfX < -170))) {
+            bHasBigDiff = true;
+        } else if (dfDiffLong > dfMaxSmallDiffLong) {
+            dfMaxSmallDiffLong = dfDiffLong;
+        }
+    }
+
+    var poMulti = []
+
+    if (bHasBigDiff && dfMaxSmallDiffLong < 10) {
+        var poNewLS = []
+        poMulti.push(poNewLS);
+        for (var i = 0; i < first_pass.length; i++) {
+            var dfX = parseFloat(first_pass[i][0]);
+            if (i > 0 &&  Math.abs(dfX - first_pass[i-1][0]) > 350) {
+                var dfX1 = parseFloat(first_pass[i-1][0]);
+                var dfY1 = parseFloat(first_pass[i-1][1]);
+                var dfX2 = parseFloat(first_pass[i][0]);
+                var dfY2 = parseFloat(first_pass[i][1]);
+                if (dfX1 > -180 && dfX1 < -170 && dfX2 == 180 &&
+                    i+1 < first_pass.length &&
+                   first_pass[i-1][0] > -180 && first_pass[i-1][0] < -170)
+                {
+                     poNewLS.push([-180, first_pass[i][1]]);
+                     i++;
+                     poNewLS.push([first_pass[i][0], first_pass[i][1]]);
+                     continue;
+                } else if (dfX1 > 170 && dfX1 < 180 && dfX2 == -180 &&
+                     i+1 < first_pass.length &&
+                     first_pass[i-1][0] > 170 && first_pass[i-1][0] < 180)
+                {
+                     poNewLS.push([180, first_pass[i][1]]);
+                     i++;
+                     poNewLS.push([first_pass[i][0], first_pass[i][1]]);
+                     continue;
+                }
+
+                if (dfX1 < -170 && dfX2 > 170)
+                {
+                    // swap dfX1, dfX2
+                    var tmpX = dfX1;
+                    dfX1 = dfX2;
+                    dfX2 = tmpX;
+                    // swap dfY1, dfY2
+                    var tmpY = dfY1;
+                    dfY1 = dfY2;
+                    dfY2 = tmpY;
+                }
+                if (dfX1 > 170 && dfX2 < -170) {
+                    dfX2 += 360;
+                }
+
+                if (dfX1 <= 180 && dfX2 >= 180 && dfX1 < dfX2)
+                {
+                    var dfRatio = (180 - dfX1) / (dfX2 - dfX1);
+                    var dfY = dfRatio * dfY2 + (1 - dfRatio) * dfY1;
+                    poNewLS.push([first_pass[i-1][0] > 170 ? 180 : -180, dfY]);
+                    poNewLS = [];
+                    poNewLS.push([first_pass[i-1][0] > 170 ? -180 : 180, dfY]);
+                    poMulti.push(poNewLS);
+                }
+                else
+                {
+                    poNewLS = [];
+                    poMulti.push(poNewLS);
+                }
+                poNewLS.push([dfX, first_pass[i][1]]);
+            } else {
+                poNewLS.push([first_pass[i][0], first_pass[i][1]]);
+            }
+        }
+    } else {
+       // add normally
+        var poNewLS = []
+        poMulti.push(poNewLS);
+        for (var i = 0; i < first_pass.length; i++) {
+            poNewLS.push([first_pass[i][0],first_pass[i][1]]);
+        }
+    }
+
+    var arc = new Arc(this.properties);
+    for (var i = 0; i < poMulti.length; i++) {
+        var line = new LineString();
+        arc.geometries.push(line);
+        var points = poMulti[i];
+        for (var j = 0; j < points.length; j++) {
+            line.move_to(points[j]);
         }
     }
     return arc;
 };
-
 
 if (typeof window === 'undefined') {
   // nodejs
