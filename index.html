@@ -5,7 +5,11 @@
     <meta charset="utf-8" />
     <link rel="stylesheet" href="http://leaflet.cloudmade.com/dist/leaflet.css" />
     <!--[if lte IE 8]><link rel="stylesheet" href="../dist/leaflet.ie.css" /><![endif]-->
+
+<!--
     <script src="http://leaflet.cloudmade.com/dist/leaflet.js"></script>
+--> 
+    <script src="https://raw.github.com/CloudMade/Leaflet/master/dist/leaflet.js"></script>
     <script src="./arc.js"></script>
     <style>
       body {
@@ -61,13 +65,9 @@
                 }
                 
                 var gc = greatCircle.Arc(npoints);
-                var points = [];
-                for (i = 0; i < npoints; i++) {
-                    var c = gc.coords[i];
-                    points.push(new L.LatLng(c[1], c[0]));
-                }
-
-                var line = new L.Polyline(points);
+                var line = new L.GeoJSON();
+                line.addGeoJSON(gc.json());
+                //console.log(gc.json());
                 line.bindPopup("great circle from " + coords[0].view() + " to " + coords[1].view());
                 setTimeout(function() {
                     map.addLayer(line);
@@ -78,6 +78,7 @@
                                 
         function onMapClick(e) {
           var coord = new arc.Coord(e.latlng.lng,e.latlng.lat);
+          console.log('clicked at: ' + e.latlng.lng + ' ' + e.latlng.lat)
           coords.push(coord);
           draw(coords);
         }
