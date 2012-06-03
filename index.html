@@ -46,13 +46,13 @@
             if (len == 1) {
                 var start = new L.LatLng(coords[0].lat, coords[0].lon);
                 var circleOptions = {color: '#f03', opacity: 0.7};
-                var circle = new L.CircleMarker(start, 2, circleOptions);
+                var circle = new L.CircleMarker(start, circleOptions);
                 map.addLayer(circle);
                
             } else if (len == 2) {
                 var end = new L.LatLng(coords[1].lat, coords[1].lon);
                 var circleOptions = {color: '#f03', opacity: 0.7};
-                var circle = new L.CircleMarker(end, 2, circleOptions);
+                var circle = new L.CircleMarker(end, circleOptions);
                 map.addLayer(circle);
 
                 try {
