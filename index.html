@@ -12,22 +12,44 @@
     <script src="https://raw.github.com/CloudMade/Leaflet/master/dist/leaflet.js"></script>
     <script src="./arc.js"></script>
     <style>
+
       body {
         margin:40px auto;
-        width:800px;
+        width:90%;
         font:14px/20px 'Helvetica';
       }
+
+      #map {
+        width:  100%;
+        height: 500px;
+        margin: 10px auto;
+      }
+
+      #json-dump {
+        width: 100%;
+        height: 100px;
+      }
+
     </style>
 </head>
 <body>
+
     <div>
       <h3>Arc.js with Leaflet</h3> 
-      <p>Single clicks on the map will plot points. Once you have drawn two points a great circle arc (curved path) should automatically be drawn between the first point and the second.</p>
+      <p>Single clicks on the map will plot points. Once you have drawn two points a great circle arc (curved path) should automatically be drawn between the first point and the second. All drawn lines are collected as GeoJSON below the map.</p>
       <p><a href="https://github.com/springmeyer/arc.js">source code on github</a></p>
-    <div id="map" style="width: 800px; height: 400px"></div>
     </div>
+
+    <div id="map"></div>
+
+    <div id="geojson">
+    <textarea id="json-dump"> foo</textarea>
+    </div>
+
     <script>
         var map = new L.Map('map');
+        var idx = 1;
+        var features = [];
         
         var url = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
         var attribution = 'Map data &copy; 2011 OpenStreetMap contributors';
@@ -38,25 +60,64 @@
         // number of intermediate arc points
         var npoints = 50;
         var coords = [];
+        var points = [];
+        var snap_tolerance = 1000000;
         
         map.on('click', onMapClick);
 
+        var start;
+        var end;
         function draw(coords) {
             var len = coords.length;
             if (len == 1) {
-                var start = new L.LatLng(coords[0].lat, coords[0].lon);
-                var circleOptions = {color: '#f03', opacity: 0.7};
+                var hit = false;
+                start = coords[0];
+                for (var i=0;i<points.length;++i) {
+                    var distance = points[i].distanceTo(start);
+                    if (distance<snap_tolerance) {
+                        console.log('hit previous point, re-using location')
+                        start = points[i];
+                        hit = true;
+                    } else {
+                        console.log(distance);
+                    }
+                }
+                if (!hit) {
+                    points.push(start);
+                }
+                var circleOptions = {color: '#f03', opacity: 0.5, clickable:false};
                 var circle = new L.CircleMarker(start, circleOptions);
                 map.addLayer(circle);
-               
+
             } else if (len == 2) {
-                var end = new L.LatLng(coords[1].lat, coords[1].lon);
-                var circleOptions = {color: '#f03', opacity: 0.7};
+                var hit = false;
+                end = coords[1];
+                for (var i=0;i<points.length;++i) {
+                    var distance = points[i].distanceTo(end);
+                    if (distance<snap_tolerance) {
+                        console.log('hit previous point, re-using location')
+                        end = points[i];
+                        hit = true;
+                    } else {
+                        console.log(distance);
+                    }
+                }
+                if (!hit) {
+                    points.push(end);
+                }
+                var circleOptions = {color: '#f03', opacity: 0.5, clickable:false};
                 var circle = new L.CircleMarker(end, circleOptions);
                 map.addLayer(circle);
 
                 try {
-                    var greatCircle = new arc.GreatCircle(coords[0],coords[1]);
+                    var from = new arc.Coord(start.lng,start.lat);
+                    var to = new arc.Coord(end.lng,end.lat);
+                    var properties = {
+                        arc:idx++,
+                        start:''+from.lon+','+from.lat,
+                        end:''+to.lon+','+to.lat
+                    };
+                    var greatCircle = new arc.GreatCircle(from,to,properties);
                 } catch (e) {
                     // catch possible antipodes error
                     alert(e.message);
@@ -66,18 +127,25 @@
                 
                 var gc = greatCircle.Arc(npoints);
                 var line = new L.GeoJSON();
-                line.addGeoJSON(gc.json());
-                //console.log(gc.json());
-                line.bindPopup("great circle from " + coords[0].view() + " to " + coords[1].view());
+                var geojson_feature = gc.json();
+                features.push(geojson_feature)
+                // TODO  - figure out how to disable interactivity on json lines
+                line.addGeoJSON(geojson_feature);
+                line.bindPopup("great circle from " + coords[0] + " to " + coords[1]);
                 setTimeout(function() {
                     map.addLayer(line);
-                      coords.length = 0;
+                    coords.length = 0;
+                    document.getElementById("json-dump").value = JSON.stringify(
+                                                                { "type": "FeatureCollection",
+                                                                  "features": features
+                                                                });
+
                 },0)
             }
         }
-                                
+
         function onMapClick(e) {
-          var coord = new arc.Coord(e.latlng.lng,e.latlng.lat);
+          var coord = new L.LatLng(e.latlng.lat, e.latlng.lng);
           console.log('clicked at: ' + e.latlng.lng + ' ' + e.latlng.lat)
           coords.push(coord);
           draw(coords);
