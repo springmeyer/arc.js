@@ -62,7 +62,7 @@
         var npoints = 50;
         var coords = [];
         var points = [];
-        var snap_tolerance = 1000000;
+        var snap_tolerance = 500000;
         
         map.on('click', onMapClick);
 
@@ -95,7 +95,7 @@
                 end = coords[1];
                 for (var i=0;i<points.length;++i) {
                     var distance = points[i].distanceTo(end);
-                    if (distance<snap_tolerance) {
+                    if (distance<snap_tolerance && (points[i].lng !== start.lng)) {
                         console.log('hit previous point, re-using location')
                         end = points[i];
                         hit = true;
