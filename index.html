@@ -3,13 +3,12 @@
 <head>
     <title>arc.js</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="http://leaflet.cloudmade.com/dist/leaflet.css" />
-    <!--[if lte IE 8]><link rel="stylesheet" href="../dist/leaflet.ie.css" /><![endif]-->
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.3.1/leaflet.css" />
+    <!--[if lte IE 8]>
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.3.1/leaflet.ie.css" />
+    <![endif]-->
 
-<!--
-    <script src="http://leaflet.cloudmade.com/dist/leaflet.js"></script>
---> 
-    <script src="https://raw.github.com/CloudMade/Leaflet/master/dist/leaflet.js"></script>
+    <script src="http://cdn.leafletjs.com/leaflet-0.3.1/leaflet.js"></script>
     <script src="./arc.js"></script>
     <style>
 
@@ -76,11 +75,11 @@
                 for (var i=0;i<points.length;++i) {
                     var distance = points[i].distanceTo(start);
                     if (distance<snap_tolerance) {
-                        console.log('hit previous point, re-using location')
+                        //console.log('hit previous point, re-using location')
                         start = points[i];
                         hit = true;
                     } else {
-                        console.log(distance);
+                        //console.log(distance);
                     }
                 }
                 if (!hit) {
@@ -96,11 +95,11 @@
                 for (var i=0;i<points.length;++i) {
                     var distance = points[i].distanceTo(end);
                     if (distance<snap_tolerance && (points[i].lng !== start.lng)) {
-                        console.log('hit previous point, re-using location')
+                        //console.log('hit previous point, re-using location')
                         end = points[i];
                         hit = true;
                     } else {
-                        console.log(distance);
+                        //console.log(distance);
                     }
                 }
                 if (!hit) {
@@ -147,7 +146,7 @@
 
         function onMapClick(e) {
           var coord = new L.LatLng(e.latlng.lat, e.latlng.lng);
-          console.log('clicked at: ' + e.latlng.lng + ' ' + e.latlng.lat)
+          //console.log('clicked at: ' + e.latlng.lng + ' ' + e.latlng.lat)
           coords.push(coord);
           draw(coords);
         }
