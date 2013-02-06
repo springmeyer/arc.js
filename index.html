@@ -3,12 +3,12 @@
 <head>
     <title>arc.js</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.3.1/leaflet.css" />
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.css" />
     <!--[if lte IE 8]>
-        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.3.1/leaflet.ie.css" />
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.ie.css" />
     <![endif]-->
 
-    <script src="http://cdn.leafletjs.com/leaflet-0.3.1/leaflet.js"></script>
+    <script src="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js"></script>
     <script src="./arc.js"></script>
     <style>
 
@@ -51,9 +51,10 @@
         var idx = 1;
         var features = [];
         
-        var url = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        //var url = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
         var attribution = 'Map data &copy; 2011 OpenStreetMap contributors';
-        var osm = new L.TileLayer(url, {maxZoom: 18, attribution: attribution});
+        var url = 'https://tiles.mapbox.com/v3/e8e0d8,base.live-land-tr,base.live-landuse-tr,base.live-water,base.live-buildings,base.live-streets-en/{z}/{x}/{y}.png?updated=13eaf53'
+        var osm = new L.TileLayer(url, {maxZoom: 17, attribution: attribution, noWrap:true});
         
         map.setView(new L.LatLng(30, -50), 2).addLayer(osm);
         
@@ -126,11 +127,11 @@
                 }
                 
                 var gc = greatCircle.Arc(npoints);
-                var line = new L.GeoJSON();
+                var line = new L.geoJson().addTo(map);
                 var geojson_feature = gc.json();
                 features.push(geojson_feature)
                 // TODO  - figure out how to disable interactivity on json lines
-                line.addGeoJSON(geojson_feature);
+                line.addData(geojson_feature);
                 line.bindPopup("great circle from " + coords[0] + " to " + coords[1]);
                 setTimeout(function() {
                     map.addLayer(line);
@@ -147,7 +148,7 @@
         function onMapClick(e) {
           var coord = new L.LatLng(e.latlng.lat, e.latlng.lng);
           //console.log('clicked at: ' + e.latlng.lng + ' ' + e.latlng.lat)
-          coords.push(coord);
+          coords.push(coord.wrap());
           draw(coords);
         }
     </script>
