@@ -53,7 +53,7 @@
         
         //var url = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
         var attribution = 'Map data &copy; 2011 OpenStreetMap contributors';
-        var url = 'https://tiles.mapbox.com/v3/e8e0d8,base.live-land-tr,base.live-landuse-tr,base.live-water,base.live-buildings,base.live-streets-en/{z}/{x}/{y}.png?updated=13eaf53'
+        var url = 'http://a.tiles.mapbox.com/v3/springmeyer.map-dn2wf053/{z}/{x}/{y}.png'
         var osm = new L.TileLayer(url, {maxZoom: 17, attribution: attribution, noWrap:true});
         
         map.setView(new L.LatLng(30, -50), 2).addLayer(osm);
