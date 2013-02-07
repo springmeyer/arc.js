@@ -56,7 +56,7 @@
         var url = 'http://a.tiles.mapbox.com/v3/springmeyer.map-dn2wf053/{z}/{x}/{y}.png'
         var osm = new L.TileLayer(url, {maxZoom: 17, attribution: attribution, noWrap:true});
         
-        map.setView(new L.LatLng(30, -50), 2).addLayer(osm);
+        map.setView(new L.LatLng(0, 0), 1).addLayer(osm);
         
         // number of intermediate arc points
         var npoints = 50;
