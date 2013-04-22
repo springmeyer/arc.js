@@ -53,7 +53,8 @@
         
         //var url = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
         var attribution = 'Map data &copy; 2011 OpenStreetMap contributors';
-        var url = 'http://{s}.tiles.mapbox.com/v3/springmeyer.map-dn2wf053/{z}/{x}/{y}.png'
+        
+        var url = 'http://{s}.tiles.mapbox.com/v3/springmeyer.map-7jkxlsx1/{z}/{x}/{y}.png'
         var osm = new L.TileLayer(url, {maxZoom: 17, attribution: attribution, noWrap:true});
         
         map.setView(new L.LatLng(0, 0), 1).addLayer(osm);
