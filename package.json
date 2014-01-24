@@ -1,5 +1,6 @@
 {
   "name": "arc",
+  "version": "0.0.3",
   "description": "draw great circle arcs",
   "url": "https://github.com/springmeyer/arc.js",
   "keywords": [
@@ -17,7 +18,6 @@
       "type" : "git",
       "url"  : "git://github.com/springmeyer/arc.js.git"
   },
-  "version": "0.0.2",
   "licenses": [{
       "type": "BSD"
   }],
