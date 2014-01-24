@@ -123,7 +123,7 @@ GreatCircle.prototype.Arc = function(npoints,options) {
     var first_pass = [];
     //var minx = 0;
     //var maxx = 0;
-    if (npoints <= 2) {
+    if (!npoints || npoints <= 2) {
         first_pass.push([this.start.lon, this.start.lat]);
         first_pass.push([this.end.lon, this.end.lat]);
     } else {
