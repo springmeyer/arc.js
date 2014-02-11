@@ -60,7 +60,7 @@ intermediate coordinate pairs.
 
 The first argument to `Arc` specifies the number of intermediate vertices you want in the resulting line. The higher the number the more dense and accurate the line will be.
 
-The second argument is an optional object to declare options. The `offset` option controls the likelyhood that lines which cross the dateline will be split. The higher the number the more likely. The default value is 10, which means lines with 10 degress of the dateline will be split. For lines that cross and dateline and are near the poles you will likely need a higher value to trigger splitting. It is unclear to me (@springmeyer) what the drawbacks are of high offsets. I simply ported the code from OGR's `gdal/ogr/ogrgeometryfactory.cpp` and have not taken the time to fully comprehend how it works.
+The second argument is an optional object to declare options. The `offset` option controls the likelyhood that lines will be split which cross the dateline. The higher the number the more likely. The default value is 10, which means lines within 10 degress of the dateline will be split. For lines that cross and dateline and are also near the poles you will likely need a higher value to trigger splitting. It is unclear to me (@springmeyer) what the drawbacks are of high offsets. I simply ported the code from OGR's `gdal/ogr/ogrgeometryfactory.cpp` and have not taken the time to fully comprehend how it works.
 
 **4)** Convert line to GeoJSON geometry
 
