@@ -1,3 +1,5 @@
+'use strict';
+
 var arc = require('../');
 var assert = require('assert');
 
@@ -44,6 +46,7 @@ describe('GreatCircle', function() {
         }, {
             x: 10, y: 0
         });
+        assert.ok(a);
     });
     it('#interpolate', function() {
         var a = new arc.GreatCircle({
@@ -85,7 +88,7 @@ describe('Routes', function() {
             //console.log(JSON.stringify(line))
             assert.deepEqual(line,arcs[idx]);
        });
-    })
+    });
 });
 
 
