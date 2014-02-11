@@ -44,9 +44,12 @@ Next we pass the start/end to the `GreatCircle` constructor, along with an optio
 Then call the `Arc` function to generate a line:
 
     var npoints = 6;
-    var line = gc.Arc(npoints);
+    var options = {offset:10}
+    var line = gc.Arc(npoints,options);
 
 The `npoints` argument specifies the number of intermediate vertices you want in the resulting line. The higher the number the more dense and accurate the line will be.
+
+The `offset` option controls the likelyhood that lines which cross the dateline will be split. The higher the number the more likely. For lines that cross and dateline and are near the poles and number as high as 180 might be needed for splitting to be triggered. It is unclear to me (@springmeyer) what the drawbacks are of high offsets - the default is 10 if you do not specify a value - this default comes from the OGR port.
 
 Then `line` will be a raw sequence of the start and end coordinates plus an arc of
 intermediate coordinate pairs.

@@ -56,7 +56,8 @@
         map.setView(new L.LatLng(0, 0), 1).addLayer(osm);
         
         // number of intermediate arc points
-        var npoints = 50;
+        var npoints = 100;
+        var offset = 20;
         var coords = [];
         var points = [];
         var snap_tolerance = 500000;
@@ -123,7 +124,7 @@
                     return;
                 }
                 
-                var gc = greatCircle.Arc(npoints);
+                var gc = greatCircle.Arc(npoints,{offset:offset});
                 var line = new L.geoJson().addTo(map);
                 var geojson_feature = gc.json();
                 features.push(geojson_feature)
@@ -148,6 +149,31 @@
           coords.push(coord.wrap());
           draw(coords);
         }
+
+        // debugging: adding points manually
+        function add(s,e) {
+            var start_ll = new L.LatLng(s[1],s[0]);
+            var end_ll = new L.LatLng(e[1],e[0]);
+            var start_coord = new arc.Coord(start_ll.lng,start_ll.lat);
+            var end_coord = new arc.Coord(end_ll.lng,end_ll.lat);
+            var description = ''+s[0]+','+s[1]+'=>'+e[0]+','+e[1]+'';
+            var gc0 = new arc.GreatCircle(start_coord,end_coord, {'name': 'line', 'color':'#ff7200','description':description});
+            var line0 = gc0.Arc(npoints,{offset:offset});
+            var geojson = line0.json();
+            console.log(JSON.stringify(geojson))
+            document.getElementById("json-dump").value = JSON.stringify(geojson);
+            L.geoJson(geojson, {
+                style: function (feature) {
+                  return {color: feature.properties.color};
+                },
+                onEachFeature: function (feature, layer) {
+                  layer.bindPopup(feature.properties.description);
+                }
+            }).addTo(map);
+        }
+        add([-74.564208984375,-0.17578097424708533],[137.779541015625,-22.75592068148639])
+        add([-66.829833984375,-18.81271785640776],[118.795166015625,-20.797201434306984])
+        add([114.576416015625,-44.21370990970204],[-65.423583984375,-43.19716728250127])
     </script>
 </body>
 </html>

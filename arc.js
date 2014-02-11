@@ -121,8 +121,6 @@ GreatCircle.prototype.interpolate = function(f) {
  */
 GreatCircle.prototype.Arc = function(npoints,options) {
     var first_pass = [];
-    //var minx = 0;
-    //var maxx = 0;
     if (!npoints || npoints <= 2) {
         first_pass.push([this.start.lon, this.start.lat]);
         first_pass.push([this.end.lon, this.end.lat]);
@@ -131,8 +129,6 @@ GreatCircle.prototype.Arc = function(npoints,options) {
         for (var i = 0; i < npoints; i++) {
             var step = delta * i;
             var pair = this.interpolate(step);
-            //minx = Math.min(minx,pair[0]);
-            //maxx = Math.max(maxx,pair[0]);
             first_pass.push(pair);
         }
     }
@@ -143,43 +139,50 @@ GreatCircle.prototype.Arc = function(npoints,options) {
     */
     var bHasBigDiff = false;
     var dfMaxSmallDiffLong = 0;
+    // from http://www.gdal.org/ogr2ogr.html
+    // -datelineoffset:
+    // (starting with GDAL 1.10) offset from dateline in degrees (default long. = +/- 10deg, geometries within 170deg to -170deg will be splited)
+    var dfDateLineOffset = options && options.offset ? options.offset : 10;
+    var dfLeftBorderX = 180 - dfDateLineOffset;
+    var dfRightBorderX = -180 + dfDateLineOffset;
+    var dfDiffSpace = 360 - dfDateLineOffset
+
+    // https://github.com/OSGeo/gdal/blob/7bfb9c452a59aac958bff0c8386b891edf8154ca/gdal/ogr/ogrgeometryfactory.cpp#L2342
     for (var i = 1; i < first_pass.length; i++) {
-        //if (minx > 170 && maxx > 180) {
-        // }
         var dfPrevX = first_pass[i-1][0];
         var dfX = first_pass[i][0];
         var dfDiffLong = Math.abs(dfX - dfPrevX);
-        if (dfDiffLong > 350 &&
-            ((dfX > 170 && dfPrevX < -170) || (dfPrevX > 170 && dfX < -170))) {
+        if (dfDiffLong > dfDiffSpace &&
+            ((dfX > dfLeftBorderX && dfPrevX < dfRightBorderX) || (dfPrevX > dfLeftBorderX && dfX < dfRightBorderX))) {
             bHasBigDiff = true;
         } else if (dfDiffLong > dfMaxSmallDiffLong) {
             dfMaxSmallDiffLong = dfDiffLong;
         }
     }
 
-    var poMulti = []
 
-    if (bHasBigDiff && dfMaxSmallDiffLong < 10) {
+    var poMulti = []
+    if (bHasBigDiff && dfMaxSmallDiffLong < dfDateLineOffset) {
         var poNewLS = []
         poMulti.push(poNewLS);
         for (var i = 0; i < first_pass.length; i++) {
             var dfX = parseFloat(first_pass[i][0]);
-            if (i > 0 &&  Math.abs(dfX - first_pass[i-1][0]) > 350) {
+            if (i > 0 &&  Math.abs(dfX - first_pass[i-1][0]) > dfDiffSpace) {
                 var dfX1 = parseFloat(first_pass[i-1][0]);
                 var dfY1 = parseFloat(first_pass[i-1][1]);
                 var dfX2 = parseFloat(first_pass[i][0]);
                 var dfY2 = parseFloat(first_pass[i][1]);
-                if (dfX1 > -180 && dfX1 < -170 && dfX2 == 180 &&
+                if (dfX1 > -180 && dfX1 < dfRightBorderX && dfX2 == 180 &&
                     i+1 < first_pass.length &&
-                   first_pass[i-1][0] > -180 && first_pass[i-1][0] < -170)
+                   first_pass[i-1][0] > -180 && first_pass[i-1][0] < dfRightBorderX)
                 {
                      poNewLS.push([-180, first_pass[i][1]]);
                      i++;
                      poNewLS.push([first_pass[i][0], first_pass[i][1]]);
                      continue;
-                } else if (dfX1 > 170 && dfX1 < 180 && dfX2 == -180 &&
+                } else if (dfX1 > dfLeftBorderX && dfX1 < 180 && dfX2 == -180 &&
                      i+1 < first_pass.length &&
-                     first_pass[i-1][0] > 170 && first_pass[i-1][0] < 180)
+                     first_pass[i-1][0] > dfLeftBorderX && first_pass[i-1][0] < 180)
                 {
                      poNewLS.push([180, first_pass[i][1]]);
                      i++;
@@ -187,7 +190,7 @@ GreatCircle.prototype.Arc = function(npoints,options) {
                      continue;
                 }
 
-                if (dfX1 < -170 && dfX2 > 170)
+                if (dfX1 < dfRightBorderX && dfX2 > dfLeftBorderX)
                 {
                     // swap dfX1, dfX2
                     var tmpX = dfX1;
@@ -198,7 +201,7 @@ GreatCircle.prototype.Arc = function(npoints,options) {
                     dfY1 = dfY2;
                     dfY2 = tmpY;
                 }
-                if (dfX1 > 170 && dfX2 < -170) {
+                if (dfX1 > dfLeftBorderX && dfX2 < dfRightBorderX) {
                     dfX2 += 360;
                 }
 
@@ -206,9 +209,9 @@ GreatCircle.prototype.Arc = function(npoints,options) {
                 {
                     var dfRatio = (180 - dfX1) / (dfX2 - dfX1);
                     var dfY = dfRatio * dfY2 + (1 - dfRatio) * dfY1;
-                    poNewLS.push([first_pass[i-1][0] > 170 ? 180 : -180, dfY]);
+                    poNewLS.push([first_pass[i-1][0] > dfLeftBorderX ? 180 : -180, dfY]);
                     poNewLS = [];
-                    poNewLS.push([first_pass[i-1][0] > 170 ? -180 : 180, dfY]);
+                    poNewLS.push([first_pass[i-1][0] > dfLeftBorderX ? -180 : 180, dfY]);
                     poMulti.push(poNewLS);
                 }
                 else
@@ -222,7 +225,7 @@ GreatCircle.prototype.Arc = function(npoints,options) {
             }
         }
     } else {
-       // add normally
+        // add normally
         var poNewLS = []
         poMulti.push(poNewLS);
         for (var i = 0; i < first_pass.length; i++) {
