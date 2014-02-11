@@ -114,8 +114,8 @@
                 map.addLayer(circle);
 
                 try {
-                    var from = new arc.Coord(start.lng,start.lat);
-                    var to = new arc.Coord(end.lng,end.lat);
+                    var from = {x: start.lng, y: start.lat};
+                    var to = {x: end.lng, y:end.lat};
                     var properties = {
                         arc:idx++,
                         start:''+from.lon+','+from.lat,
@@ -158,8 +158,8 @@
         function add(s,e) {
             var start_ll = new L.LatLng(s[1],s[0]);
             var end_ll = new L.LatLng(e[1],e[0]);
-            var start_coord = new arc.Coord(start_ll.lng,start_ll.lat);
-            var end_coord = new arc.Coord(end_ll.lng,end_ll.lat);
+            var start_coord = {x: start_ll.lng, y:start_ll.lat};
+            var end_coord = {x:end_ll.lng, y:end_ll.lat};
             var description = ''+s[0]+','+s[1]+'=>'+e[0]+','+e[1]+'';
             var gc0 = new arc.GreatCircle(start_coord,end_coord, {'name': 'line', 'color':'#ff7200','description':description});
             var line0 = gc0.Arc(npoints,{offset:offset});

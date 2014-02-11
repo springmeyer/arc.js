@@ -52,5 +52,6 @@ describe('GreatCircle', function() {
             x: 10, y: 0
         });
         assert.deepEqual(a.interpolate(0), [0, 0]);
+        assert.deepEqual(a.interpolate(1), [10, 0]);
     });
 });

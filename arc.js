@@ -81,8 +81,8 @@ Arc.prototype.wkt = function() {
  */
 var GreatCircle = function(start,end,properties) {
 
-    this.start = start;
-    this.end = end;
+    this.start = new Coord(start.x,start.y);
+    this.end = new Coord(end.x,end.y);
     this.properties = properties || {};
 
     var w = this.start.x - this.end.x;

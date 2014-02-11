@@ -28,10 +28,10 @@ The API works like so:
 
 First we need to declare where the arc should start and end
 
-    var start = new arc.Coord(-122, 48);
-    var end = new arc.Coord(-77, 39);
+    var start = { x:-122, y: 48 };
+    var end = { x: -77, y: 39 };
 
-These are `[lon,lat]` pairs like GeoJSON. Be aware that Leaflet uses `[lat,lon]` order [currently](https://github.com/Leaflet/Leaflet/issues/1455).
+Note that `x` here is longitude in degrees and `y` is latitude in degrees.
 
 **2)** Create GreatCircle object
 
