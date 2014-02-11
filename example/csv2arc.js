@@ -71,8 +71,8 @@ csv_lines.forEach(function(row,idx) {
     var end_y = parseFloat(coords[3].trim());    // second latitude
     
     // now create special arc Coordinate objects from the start and end pairs
-    var start = new arc.Coord(start_x, start_y);
-    var end = new arc.Coord(end_x, end_y);
+    var start = {x: start_x, y: start_y};
+    var end = {x: end_x, y: end_y};
 
 
     /* handle properties (csv attributes) second */

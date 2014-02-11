@@ -3,7 +3,7 @@
 var fs = require('fs'),
     arc = require('../arc');
 
-var geojson = JSON.parse(fs.readFileSync('tracks.geojson', 'utf-8'));
+var geojson = JSON.parse(fs.readFileSync(__dirname + '/tracks.geojson', 'utf-8'));
 
 var tolerance = 1;
 
@@ -17,8 +17,8 @@ for (var i = 0; i < geojson.features.length; i++) {
                 Math.abs(a[1] - b[1]));
             if (dist > tolerance) {
                 var gc = new arc.GreatCircle(
-                    new arc.Coord(a[0], a[1]),
-                    new arc.Coord(b[0], b[1]));
+                    { x: a[0], y: a[1] },
+                    { x: b[0], y: b[1] });
                 var line = gc.Arc(10);
                 geojson.features[i].geometry.coordinates[j].arc = line.coords;
             }
@@ -35,4 +35,4 @@ for (var i = 0; i < geojson.features.length; i++) {
     }
 }
 
-fs.writeFileSync('tracks_round.geojson', JSON.stringify(geojson));
+console.log(JSON.stringify(geojson));

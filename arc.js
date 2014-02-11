@@ -80,7 +80,12 @@ Arc.prototype.wkt = function() {
  *
  */
 var GreatCircle = function(start,end,properties) {
-
+    if (!start || start.x === undefined || start.y === undefined) {
+        throw new Error("GreatCircle constructor expects two args: start and end objects with x and y properties");
+    }
+    if (!end || end.x === undefined || end.y === undefined) {
+        throw new Error("GreatCircle constructor expects two args: start and end objects with x and y properties");
+    }
     this.start = new Coord(start.x,start.y);
     this.end = new Coord(end.x,end.y);
     this.properties = properties || {};
