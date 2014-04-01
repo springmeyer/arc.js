@@ -28,9 +28,17 @@
     "node": ">=0.4.0"
   },
   "scripts": {
-    "test": "mocha -R spec"
+    "test": "tape test/*.js"
   },
   "devDependencies": {
-    "mocha": "~1.17.1"
+    "tape": "~2.12.1"
+  },
+  "testling": {
+    "files": "test/*.js",
+    "browsers": [
+      "chrome/22..latest",
+      "firefox/16..latest",
+      "safari/latest"
+    ]
   }
 }

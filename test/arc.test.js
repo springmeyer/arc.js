@@ -1,62 +1,40 @@
 'use strict';
 
+var test = require('tape').test;
 var arc = require('../');
-var assert = require('assert');
 
-describe('Coord', function() {
-    it('#constructor', function() {
-        var coord = new arc.Coord(0,0);
-        assert.equal(coord.lon,0);
-        assert.equal(coord.lat,0);
-        assert.equal(coord.x,0);
-        assert.equal(coord.y,0);
-    });
-    it('#view', function() {
-        var coord = new arc.Coord(0,0);
-        assert.equal(coord.view(),'0,0');
-    });
-    it('#antipode', function() {
-        var coord = new arc.Coord(0,0);
-        assert.equal(coord.antipode().view(),'-180,0');
-    });
+test('Coord', function(t) {
+    var coord = new arc.Coord(0,0);
+    t.equal(coord.lon,0);
+    t.equal(coord.lat,0);
+    t.equal(coord.x,0);
+    t.equal(coord.y,0);
+    t.equal(coord.view(),'0,0');
+    t.equal(coord.antipode().view(),'-180,0');
+    t.end();
 });
 
-describe('Arc', function() {
-    it('#constructor', function() {
-        var a = new arc.Arc();
-        assert.deepEqual(a.properties, {});
+test('Arc', function(t) {
+    var a = new arc.Arc();
+    t.deepEqual(a.properties, {});
+    t.equal(a.wkt(), '');
+    t.deepEqual(a.json(),{
+        'geometry': { 'type': 'LineString', 'coordinates': null },
+        'type': 'Feature', 'properties': {}
     });
-    it('#wkt', function() {
-        var a = new arc.Arc();
-        assert.equal(a.wkt(), '');
-    });
-    it('#json', function() {
-        var a = new arc.Arc();
-        assert.deepEqual(a.json(),{
-            'geometry': { 'type': 'LineString', 'coordinates': null },
-            'type': 'Feature', 'properties': {}
-        });
-    });
+    t.end();
 });
 
-describe('GreatCircle', function() {
-    it('#constructor', function() {
-        var a = new arc.GreatCircle({
-            x: 0, y: 0
-        }, {
-            x: 10, y: 0
-        });
-        assert.ok(a);
+test('GreatCircle', function(t) {
+    var a = new arc.GreatCircle({
+        x: 0, y: 0
+    }, {
+        x: 10, y: 0
     });
-    it('#interpolate', function() {
-        var a = new arc.GreatCircle({
-            x: 0, y: 0
-        }, {
-            x: 10, y: 0
-        });
-        assert.deepEqual(a.interpolate(0), [0, 0]);
-        assert.deepEqual(a.interpolate(1), [10, 0]);
-    });
+    t.ok(a);
+    t.deepEqual(a.interpolate(0), [0, 0]);
+    t.deepEqual(a.interpolate(1), [10, 0]);
+    t.end();
 });
 
 var routes = [
@@ -80,15 +58,14 @@ var arcs = [
 ];
 
 
-describe('Routes', function() {
+test('Routes', function(t) {
     routes.forEach(function(route,idx) {
-       it(route[2].name, function() {
-            var gc = new arc.GreatCircle(route[0], route[1], route[2]);
-            var line = gc.Arc(3);
-            //console.log(JSON.stringify(line))
-            assert.deepEqual(line,arcs[idx]);
-       });
+        var gc = new arc.GreatCircle(route[0], route[1], route[2]);
+        var line = gc.Arc(3);
+        //console.log(JSON.stringify(line))
+        t.deepEqual(line,arcs[idx]);
     });
+    t.end();
 });
 
 
