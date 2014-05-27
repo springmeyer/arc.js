@@ -1,25 +1,31 @@
 # arc.js
-
-Calculate great circles routes as lines in GeoJSON or WKT format.
+> Calculate great circles routes as lines in GeoJSON or WKT format.
 
 Algorithms from http://williams.best.vwh.net/avform.htm#Intermediate
 
 Includes basic support for splitting lines that cross the dateline, based on
 a partial port of code from OGR.
 
+## Install
 
-# Usage
+```bash
+$ npm install --save arc.js
+```
+
+
+## Usage
 
 Require the library in node.js like:
-
-    var arc = require('arc');
+```js
+var arc = require('arc');
+```
 
 Use in the browser like:
+```html
+<script src="./arc.js"></script>
+```
 
-    <script src="./arc.js"></script>
-
-
-# API
+## API
 
 **1)** Create start and end coordinates
 
