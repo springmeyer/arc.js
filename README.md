@@ -34,8 +34,10 @@ Use in the browser like:
 
 First we need to declare where the arc should start and end
 
-    var start = { x: -122, y: 48 };
-    var end = { x: -77, y: 39 };
+```js
+var start = { x: -122, y: 48 };
+var end = { x: -77, y: 39 };
+```
 
 Note that `x` here is longitude in degrees and `y` is latitude in degrees.
 
@@ -43,27 +45,33 @@ Note that `x` here is longitude in degrees and `y` is latitude in degrees.
 
 Next we pass the start/end to the `GreatCircle` constructor, along with an optional object representing the properties for this future line.
 
-    var generator = new arc.GreatCircle(start, end, {'name': 'Seattle to DC'});
+```js
+var generator = new arc.GreatCircle(start, end, {'name': 'Seattle to DC'});
+```
 
 **3)** Generate a line arc
 
 Then call the `Arc` function on the `GreatCircle` object to generate a line:
 
-    var line = generator.Arc(100,{offset:10});
+```js
+var line = generator.Arc(100,{offset:10});
+```
 
 The `line` will be a raw sequence of the start and end coordinates plus an arc of
 intermediate coordinate pairs.
 
-    > line
-    { properties: { name: 'Seattle to DC' },
-      coords: 
-       [ [ -122, 48.00000000000001 ],
-         [ -112.06161978373486, 47.7241672604096 ],
-         [ -102.38404317022653, 46.60813199882492 ],
-         [ -93.22718895342909, 44.716217302635705 ],
-         [ -84.74823988299501, 42.14415510795357 ],
-         [ -77, 38.99999999999999 ] ],
-      length: 6 }
+```js
+> line
+{ properties: { name: 'Seattle to DC' },
+  coords: 
+   [ [ -122, 48.00000000000001 ],
+     [ -112.06161978373486, 47.7241672604096 ],
+     [ -102.38404317022653, 46.60813199882492 ],
+     [ -93.22718895342909, 44.716217302635705 ],
+     [ -84.74823988299501, 42.14415510795357 ],
+     [ -77, 38.99999999999999 ] ],
+  length: 6 }
+```
 
 #### Arc options
 
@@ -75,16 +83,20 @@ The second argument is an optional object to declare options. The `offset` optio
 
 To serialize to a GeoJSON geometry:
 
-    > line.json();
-    { geometry: 
-       { type: 'LineString',
-         coordinates: [ [Object], [Object], [Object], [Object], [Object], [Object] ] },
-      type: 'Feature',
-      properties: { name: 'Seattle to DC' } }
+```js
+> line.json();
+{ geometry: 
+   { type: 'LineString',
+     coordinates: [ [Object], [Object], [Object], [Object], [Object], [Object] ] },
+  type: 'Feature',
+  properties: { name: 'Seattle to DC' } }
+```
 
 Or to WKT (Well known text):
 
-    > line.wkt();
-    'LINESTRING(-122 48.00000000000001,-112.06161978373486 47.7241672604096,-102.38404317022653 46.60813199882492,-93.22718895342909 44.716217302635705,-84.74823988299501 42.14415510795357,-77 38.99999999999999)'
+```js
+> line.wkt();
+'LINESTRING(-122 48.00000000000001,-112.06161978373486 47.7241672604096,-102.38404317022653 46.60813199882492,-93.22718895342909 44.716217302635705,-84.74823988299501 42.14415510795357,-77 38.99999999999999)'
+```
 
 It is then up to you to add up these features to create fully fledged geodata. See the examples/ directory for sample code to create GeoJSON feature collection from multiple routes.
