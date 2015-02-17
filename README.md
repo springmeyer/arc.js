@@ -7,6 +7,7 @@ Includes basic support for splitting lines that cross the dateline, based on
 a partial port of code from OGR.
 
 ## Install
+
 ```bash
 $ npm install --save arc.js
 ```
@@ -15,6 +16,9 @@ $ npm install --save arc.js
 $ bower install --save arc.js
 ```
 
+## License
+
+BSD
 
 ## Usage
 
