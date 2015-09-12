@@ -9,7 +9,7 @@ a partial port of code from OGR.
 ## Install
 
 ```bash
-$ npm install --save arc.js
+$ npm install --save arc
 ```
 
 ```bash
