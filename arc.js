@@ -246,7 +246,7 @@ GreatCircle.prototype.Arc = function(npoints,options) {
     return arc;
 };
 
-if (typeof window === 'undefined') {
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
   // nodejs
   module.exports.Coord = Coord;
   module.exports.Arc = Arc;
