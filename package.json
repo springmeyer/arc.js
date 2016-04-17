@@ -24,6 +24,7 @@
     }
   ],
   "main": "./index",
+  "jsnext:main": "./arc.es6.js",
   "engines": {
     "node": ">=0.4.0"
   },
