@@ -1,4 +1,7 @@
 
+# v0.1.1
+
+- Support browserify (https://github.com/springmeyer/arc.js/pull/26)
 
 # v0.1.0
 
