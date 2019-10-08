@@ -1,7 +1,7 @@
 # arc.js
 > Calculate great circles routes as lines in GeoJSON or WKT format.
 
-Algorithms from http://williams.best.vwh.net/avform.htm#Intermediate
+Algorithms from https://edwilliams.org/avform.htm#Intermediate
 
 Includes basic support for splitting lines that cross the dateline, based on
 a partial port of code from OGR.
