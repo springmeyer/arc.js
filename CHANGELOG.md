@@ -1,4 +1,8 @@
 
+# v0.1.2
+
+- Fix link to algorithm used in documentation (https://github.com/springmeyer/arc.js/pull/40)
+
 # v0.1.1
 
 - Support browserify (https://github.com/springmeyer/arc.js/pull/26)
