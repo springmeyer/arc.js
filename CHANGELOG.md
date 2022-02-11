@@ -1,3 +1,6 @@
+# v0.1.3
+
+- Fix bug when generating string for Antipodal error
 
 # v0.1.2
 

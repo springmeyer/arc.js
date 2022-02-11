@@ -37,6 +37,21 @@ test('GreatCircle', function(t) {
     t.end();
 });
 
+test('GreatCircleException', function(t) {
+    try {
+        new arc.GreatCircle({
+            x: 1, y: 1
+        }, {
+            x: -179, y: -1
+        });
+    }
+    catch (e) {
+        t.equal(e.toString(), "Error: it appears 1,1 and -179,-1 are 'antipodal', e.g diametrically opposite, thus " +
+            "there is no single route but rather infinite" , "Antipodal error test");
+    }
+    t.end();
+});
+
 var routes = [
     [{x: -122, y: 48}, {x: -77, y:  39}, {'name': 'Seattle to DC'}],
     [{x: -122, y: 48}, {x: 0, y:  51}, {'name': 'Seattle to London'}],
