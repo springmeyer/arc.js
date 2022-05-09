@@ -3,70 +3,78 @@
 <head>
     <title>arc.js</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
-    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+    <link rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+      integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+      crossorigin=""/>
+    <script
+      src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+      integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+      crossorigin=""></script>
     <script src="./arc.js"></script>
     <style>
-
       body {
         margin: 0px;
         padding: 0px;
         font:12px/15px 'Helvetica';
       }
 
-      #text {
-        padding-left: 40px;
-        display:inline-block;
+      .box {
+        display: flex;
+        height: 100vh;
       }
 
       #map {
-        float: left;
-        width: 70%;
-        height: 700px;
+        flex-grow: 6;
       }
 
       #json-dump {
-        float:right;
-        width:  28%;
-        margin: 0px;
-        padding: 0px;
-        height: 650px;
+        height: 80vh;
       }
 
+      #geojson {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      #text {
+        align-self: center;
+      }
     </style>
 </head>
 <body>
-
-    <div id="text">
-      <h3><a href="https://github.com/springmeyer/arc.js">Arc.js with Leaflet</a>: click to plot arcs</h3> 
+    <div class="box">
+      <div id="map"></div>
+      <div id="geojson">
+        <h3 id="text">
+          <a href="https://github.com/springmeyer/arc.js">Arc.js with Leaflet</a>: click to plot arcs
+        </h3>
+        <textarea id="json-dump"></textarea>
+      </div>
     </div>
-
-    <div id="map"></div>
-
-    <div id="geojson">
-    <textarea id="json-dump"></textarea>
-    </div>
-
     <script>
-        var map = new L.Map('map');
+        var map = L.map('map').setView(new L.LatLng(0, 0), 2)
         var idx = 1;
         var features = [];
-        
-        //var url = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-        var attribution = 'Map data &copy; 2011 OpenStreetMap contributors';
-        
-        var url = 'http://{s}.tiles.mapbox.com/v3/springmeyer.map-7jkxlsx1/{z}/{x}/{y}.png'
-        var osm = new L.TileLayer(url, {maxZoom: 17, attribution: attribution, noWrap:true});
-        
-        map.setView(new L.LatLng(0, 0), 2).addLayer(osm);
-        
+
+        var url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        var attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+
+        L.tileLayer(url, {
+            attribution,
+            maxZoom: 17,
+            noWrap:true
+
+        }).addTo(map);
+
         // number of intermediate arc points
         var npoints = 100;
         var offset = 20;
         var coords = [];
         var points = [];
         var snap_tolerance = 500000;
-        
+
         map.on('click', onMapClick);
 
         var start;
@@ -128,7 +136,7 @@
                     coords.length = 0;
                     return;
                 }
-                
+
                 var gc = greatCircle.Arc(npoints,{offset:offset});
                 var line = new L.geoJson().addTo(map);
                 var geojson_feature = gc.json();
