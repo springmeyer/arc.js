@@ -96,7 +96,7 @@ var GreatCircle = function(start,end,properties) {
     this.g = 2.0 * Math.asin(Math.sqrt(z));
 
     if (this.g == Math.PI) {
-        throw new Error('it appears ' + start.view() + ' and ' + end.view() + " are 'antipodal', e.g diametrically opposite, thus there is no single route but rather infinite");
+        throw new Error('it appears ' + this.start.view() + ' and ' + this.end.view() + " are 'antipodal', e.g diametrically opposite, thus there is no single route but rather infinite");
     } else if (isNaN(this.g)) {
         throw new Error('could not calculate great circle between ' + start + ' and ' + end);
     }
