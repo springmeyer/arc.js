@@ -120,8 +120,8 @@
                     var to = {x: end.lng, y:end.lat};
                     var properties = {
                         arc:idx++,
-                        start:''+from.lon+','+from.lat,
-                        end:''+to.lon+','+to.lat
+                        start:''+from.x+','+from.y,
+                        end:''+to.x+','+to.y
                     };
                     var greatCircle = new arc.GreatCircle(from,to,properties);
                 } catch (e) {
