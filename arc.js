@@ -12,11 +12,12 @@ var Coord = function(lon,lat) {
 
 const truncate = function(coords) {
     // truncate coordinate decimals to 6 places
-    const precision = 6;
-    const factor = Math.pow(10, precision);
+    const PRECISION = 6; 
+
     for (let i = 0; i < coords.length; i++) {
-        coords[i] = Math.round(coords[i] * factor) / factor;
+        coords[i] = Math.trunc(coords[i] * Math.pow(10, PRECISION)) / Math.pow(10, PRECISION);
     }
+
     return coords;
 }
 
