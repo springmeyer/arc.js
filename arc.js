@@ -10,12 +10,16 @@ var Coord = function(lon,lat) {
     this.y = D2R * lat;
 };
 
-const truncate = function(coords) {
-    // truncate coordinate decimals to 6 places
-    const PRECISION = 6; 
+var roundCoords = function(coords) {
+    // round coordinate decimal values to 6 places
+    var PRECISION = 6;
+    var MULTIPLIER = Math.pow(10, PRECISION)
 
-    for (let i = 0; i < coords.length; i++) {
-        coords[i] = Math.trunc(coords[i] * Math.pow(10, PRECISION)) / Math.pow(10, PRECISION);
+    for (var i = 0; i < coords.length; i++) {
+        // https://stackoverflow.com/questions/11832914/how-to-round-to-at-most-2-decimal-places-if-necessary
+        coords[i] = Math.round(
+            (coords[i] + Number.EPSILON) * MULTIPLIER
+        ) / MULTIPLIER
     }
 
     return coords;
@@ -251,7 +255,7 @@ GreatCircle.prototype.Arc = function(npoints,options) {
         arc.geometries.push(line);
         var points = poMulti[m];
         for (var j0 = 0; j0 < points.length; ++j0) {
-            line.move_to(truncate(points[j0]));
+            line.move_to(roundCoords(points[j0]));
         }
     }
     return arc;

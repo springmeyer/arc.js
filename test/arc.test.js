@@ -64,20 +64,29 @@ var routes = [
 //{ x: 114.576416015625, y:-44.21370990970204},{x: -65.423583984375, y:-43.19716728250127}
 
 var arcs = [
-  {"properties":{"name":"Seattle to DC"},"geometries":[{"coords":[[-122,48],[-97.728086,45.753681],[-77,38.999999]],"length":3}]},
-  {"properties":{"name":"Seattle to London"},"geometries":[{"coords":[[-122,48],[-64.165900,67.476242],[0,50.999999]],"length":3}]},
-  {"properties":{"name":"crosses dateline 1"},"geometries":[{"coords":[[-75.9375,35.460669],[-136.823034,-10.367409],[146.25,-43.068887]],"length":3}]},
-  {"properties":{"name":"crosses dateline 2"},"geometries":[{"coords":[[145.546875,48.458351],[-157.284841,8.442053],[-112.500000,-37.718590]],"length":3}]},
-  {"properties":{"name":"south 1"},"geometries":[{"coords":[[-74.564208,-0.175780],[-140.443271,-35.801086],[137.779541,-22.755920]],"length":3}]},
-  {"properties":{"name":"south 2"},"geometries":[{"coords":[[-66.829833,-18.812717],[-146.781778,-82.179502],[118.795166,-20.797201]],"length":3}]}
+  {"properties":{"name":"Seattle to DC"},"geometries":[{"coords":[[-122,48],[-97.728086,45.753682],[-77,39]],"length":3}]},
+  {"properties":{"name":"Seattle to London"},"geometries":[{"coords":[[-122,48],[-64.165901,67.476242],[0,51]],"length":3}]},
+  {"properties":{"name":"crosses dateline 1"},"geometries":[{"coords":[[-75.9375,35.46067],[-136.823034,-10.367409],[146.25,-43.068888]],"length":3}]},
+  {"properties":{"name":"crosses dateline 2"},"geometries":[{"coords":[[145.546875,48.458352],[-157.284841,8.442054],[-112.500000,-37.718590]],"length":3}]},
+  {"properties":{"name":"south 1"},"geometries":[{"coords":[[-74.564209,-0.175781],[-140.443271,-35.801086],[137.779541,-22.755921]],"length":3}]},
+  {"properties":{"name":"south 2"},"geometries":[{"coords":[[-66.829834,-18.812718],[-146.781778,-82.179503],[118.795166,-20.797201]],"length":3}]}
 ];
 
+var wkts = [
+  'LINESTRING(-122 48,-97.728086 45.753682,-77 39)',
+  'LINESTRING(-122 48,-64.165901 67.476242,0 51)',
+  'LINESTRING(-75.9375 35.46067,-136.823034 -10.367409,146.25 -43.068888)',
+  'LINESTRING(145.546875 48.458352,-157.284841 8.442054,-112.5 -37.71859)',
+  'LINESTRING(-74.564209 -0.175781,-140.443271 -35.801086,137.779541 -22.755921)',
+  'LINESTRING(-66.829834 -18.812718,-146.781778 -82.179503,118.795166 -20.797201)',
+]
 
 test('Routes', function(t) {
     routes.forEach(function(route,idx) {
         var gc = new arc.GreatCircle(route[0], route[1], route[2]);
         var line = gc.Arc(3);
         t.deepEqual(JSON.stringify(line), JSON.stringify(arcs[idx]));
+        t.equal(line.wkt(), wkts[idx]);
     });
     t.end();
 });
