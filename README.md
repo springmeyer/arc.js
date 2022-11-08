@@ -105,4 +105,4 @@ Or to WKT (Well known text):
 'LINESTRING(-122 48,-112.061619 47.724167,-102.384043 46.608131,-93.227188 44.716217,-84.748239 42.144155,-77 38.999999)'
 ```
 
-It is then up to you to add up these features to create fully fledged geodata. See the examples/ directory for sample code to create GeoJSON feature collection from multiple routes.
+It is then up to you to add up these features to create fully fledged geodata. See the examples/ directory for sample code to create a GeoJSON feature collection from multiple routes.
