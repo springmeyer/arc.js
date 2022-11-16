@@ -12,10 +12,6 @@ a partial port of code from OGR.
 $ npm install --save arc
 ```
 
-```bash
-$ bower install --save arc.js
-```
-
 ## License
 
 BSD
@@ -66,18 +62,18 @@ intermediate coordinate pairs.
 
 ```js
 > line
-{ 
+{
   properties: { name: 'Seattle to DC' },
   geometries: [
     {
-      coords: 
-       [ [ -122, 48.00000000000001 ],
-         [ -112.06161978373486, 47.7241672604096 ],
-         [ -102.38404317022653, 46.60813199882492 ],
-         [ -93.22718895342909, 44.716217302635705 ],
-         [ -84.74823988299501, 42.14415510795357 ],
-         [ -77, 38.99999999999999 ] ],
-      length: 6 
+      coords:
+       [ [ -122, 48 ],
+         [ -112.06162, 47.724167 ],
+         [ -102.384043, 46.608132 ],
+         [ -93.227189, 44.716217 ],
+         [ -84.74824, 42.144155 ],
+         [ -77, 39 ] ],
+      length: 6
     }
   ]
 }
@@ -95,7 +91,7 @@ To serialize to a GeoJSON geometry:
 
 ```js
 > line.json();
-{ geometry: 
+{ geometry:
    { type: 'LineString',
      coordinates: [ [Object], [Object], [Object], [Object], [Object], [Object] ] },
   type: 'Feature',
@@ -106,7 +102,7 @@ Or to WKT (Well known text):
 
 ```js
 > line.wkt();
-'LINESTRING(-122 48.00000000000001,-112.06161978373486 47.7241672604096,-102.38404317022653 46.60813199882492,-93.22718895342909 44.716217302635705,-84.74823988299501 42.14415510795357,-77 38.99999999999999)'
+'LINESTRING(-122 48,-112.061619 47.724167,-102.384043 46.608131,-93.227188 44.716217,-84.748239 42.144155,-77 38.999999)'
 ```
 
-It is then up to you to add up these features to create fully fledged geodata. See the examples/ directory for sample code to create GeoJSON feature collection from multiple routes.
+It is then up to you to add up these features to create fully fledged geodata. See the examples/ directory for sample code to create a GeoJSON feature collection from multiple routes.

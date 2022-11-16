@@ -64,20 +64,29 @@ var routes = [
 //{ x: 114.576416015625, y:-44.21370990970204},{x: -65.423583984375, y:-43.19716728250127}
 
 var arcs = [
-  {"properties":{"name":"Seattle to DC"},"geometries":[{"coords":[[-122,48],[-97.72808611752787,45.75368189927002],[-77,38.99999999999999]],"length":3}]},
-  {"properties":{"name":"Seattle to London"},"geometries":[{"coords":[[-122,48],[-64.16590091973097,67.47624207149578],[0,50.99999999999999]],"length":3}]},
-  {"properties":{"name":"crosses dateline 1"},"geometries":[{"coords":[[-75.9375,35.460669951495305],[-136.82303405489677,-10.367409282634164],[146.25,-43.06888777416961]],"length":3}]},
-  {"properties":{"name":"crosses dateline 2"},"geometries":[{"coords":[[145.54687500000003,48.45835188280866],[-157.28484118689477,8.44205355944752],[-112.50000000000001,-37.71859032558814]],"length":3}]},
-  {"properties":{"name":"south 1"},"geometries":[{"coords":[[-74.564208984375,-0.1757809742470853],[-140.44327137076033,-35.80108605508993],[137.779541015625,-22.755920681486387]],"length":3}]},
-  {"properties":{"name":"south 2"},"geometries":[{"coords":[[-66.829833984375,-18.81271785640776],[-146.78177837397814,-82.1795027896656],[118.795166015625,-20.79720143430698]],"length":3}]}
+  {"properties":{"name":"Seattle to DC"},"geometries":[{"coords":[[-122,48],[-97.728086,45.753682],[-77,39]],"length":3}]},
+  {"properties":{"name":"Seattle to London"},"geometries":[{"coords":[[-122,48],[-64.165901,67.476242],[0,51]],"length":3}]},
+  {"properties":{"name":"crosses dateline 1"},"geometries":[{"coords":[[-75.9375,35.46067],[-136.823034,-10.367409],[146.25,-43.068888]],"length":3}]},
+  {"properties":{"name":"crosses dateline 2"},"geometries":[{"coords":[[145.546875,48.458352],[-157.284841,8.442054],[-112.500000,-37.718590]],"length":3}]},
+  {"properties":{"name":"south 1"},"geometries":[{"coords":[[-74.564209,-0.175781],[-140.443271,-35.801086],[137.779541,-22.755921]],"length":3}]},
+  {"properties":{"name":"south 2"},"geometries":[{"coords":[[-66.829834,-18.812718],[-146.781778,-82.179503],[118.795166,-20.797201]],"length":3}]}
 ];
 
+var wkts = [
+  'LINESTRING(-122 48,-97.728086 45.753682,-77 39)',
+  'LINESTRING(-122 48,-64.165901 67.476242,0 51)',
+  'LINESTRING(-75.9375 35.46067,-136.823034 -10.367409,146.25 -43.068888)',
+  'LINESTRING(145.546875 48.458352,-157.284841 8.442054,-112.5 -37.71859)',
+  'LINESTRING(-74.564209 -0.175781,-140.443271 -35.801086,137.779541 -22.755921)',
+  'LINESTRING(-66.829834 -18.812718,-146.781778 -82.179503,118.795166 -20.797201)',
+]
 
 test('Routes', function(t) {
     routes.forEach(function(route,idx) {
         var gc = new arc.GreatCircle(route[0], route[1], route[2]);
         var line = gc.Arc(3);
         t.deepEqual(JSON.stringify(line), JSON.stringify(arcs[idx]));
+        t.equal(line.wkt(), wkts[idx]);
     });
     t.end();
 });

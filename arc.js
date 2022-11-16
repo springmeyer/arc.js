@@ -10,6 +10,21 @@ var Coord = function(lon,lat) {
     this.y = D2R * lat;
 };
 
+var roundCoords = function(coords) {
+    // round coordinate decimal values to 6 places
+    var PRECISION = 6;
+    var MULTIPLIER = Math.pow(10, PRECISION)
+
+    for (var i = 0; i < coords.length; i++) {
+        // https://stackoverflow.com/questions/11832914/how-to-round-to-at-most-2-decimal-places-if-necessary
+        coords[i] = Math.round(
+            (coords[i] + Number.EPSILON) * MULTIPLIER
+        ) / MULTIPLIER
+    }
+
+    return coords;
+}
+
 Coord.prototype.view = function() {
     return String(this.lon).slice(0, 4) + ',' + String(this.lat).slice(0, 4);
 };
@@ -240,7 +255,7 @@ GreatCircle.prototype.Arc = function(npoints,options) {
         arc.geometries.push(line);
         var points = poMulti[m];
         for (var j0 = 0; j0 < points.length; ++j0) {
-            line.move_to(points[j0]);
+            line.move_to(roundCoords(points[j0]));
         }
     }
     return arc;
