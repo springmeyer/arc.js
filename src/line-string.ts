@@ -1,4 +1,4 @@
-import type { Position } from "./types.js";
+import type { Position } from './types';
 
 /**
  * Internal LineString class for building geometries

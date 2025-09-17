@@ -24,8 +24,8 @@
       "type": "BSD"
     }
   ],
-  "type": "module",
   "main": "./dist/index.js",
+  "module": "./dist/esm/index.js",
   "types": "./dist/index.d.ts",
   "files": [
     "dist/",
@@ -37,15 +37,17 @@
     "node": ">=0.4.0"
   },
   "scripts": {
-    "build": "npm run clean && tsc",
+    "build": "npm run clean && tsc && tsc -p tsconfig.esm.json",
     "dev": "tsc --watch",
     "clean": "rm -rf dist/",
-    "test": "npm run build && tape test/*.js",
+    "test": "npm run build && tape test/*.js && npm run test:ts",
+    "test:ts": "tsc test/*.ts --outDir test/compiled --module commonjs --moduleResolution node --esModuleInterop --skipLibCheck && tape test/compiled/*.js",
     "prepublishOnly": "npm run build && npm test"
   },
   "devDependencies": {
     "@types/geojson": "^7946.0.16",
     "@types/node": "^20.0.0",
+    "@types/tape": "^5.8.1",
     "tape": "~5.5.3",
     "typescript": "^5.0.0"
   }

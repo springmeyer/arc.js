@@ -1,4 +1,4 @@
-import type { Position } from './types.js';
+import type { Position } from './types';
 
 /**
  * Round coordinate decimal values to 6 places for precision

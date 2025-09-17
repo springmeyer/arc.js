@@ -1,5 +1,5 @@
-import type { GeoJSONFeature, LineString as GeoJSONLineString, MultiLineString as GeoJSONMultiLineString, Position } from './types.js';
-import { LineString } from './line-string.js';
+import type { GeoJSONFeature, Position } from './types';
+import { LineString } from './line-string';
 
 /**
  * Arc class representing the result of great circle calculations
@@ -27,38 +27,43 @@ export class Arc {
      * 
      * @example
      * ```typescript
-     * const arc = new Arc({ name: 'test-arc' });
-     * console.log(arc.json()); // { type: 'Feature', geometry: { type: 'LineString', coordinates: [] }, properties: { name: 'test-arc' } }
+     * const gc = new GreatCircle({x: -122, y: 48}, {x: -77, y: 39});
+     * const arc = gc.Arc(3);
+     * console.log(arc.json()); 
+     * // { type: 'Feature', geometry: { type: 'LineString', coordinates: [[-122, 48], [-99.5, 43.5], [-77, 39]] }, properties: {} }
      * ```
      */
     json(): GeoJSONFeature {
-        return this._emptyFeature() ?? this._singleFeature() ?? this._multiFeature();
-    }
-
-    private _emptyFeature(): GeoJSONFeature | null {
+        // Handle empty case
         if (this.geometries.length === 0) {
             return {
                 type: 'Feature',
-                geometry: { type: 'LineString', coordinates: [] },
+                // NOTE: coordinates: null is non-standard GeoJSON (RFC 7946 specifies empty array [])
+                // but maintained for backward compatibility with original arc.js behavior
+                geometry: { type: 'LineString', coordinates: null as any },
                 properties: this.properties
             };
         }
-        return null;
-    }
 
-    private _singleFeature(): GeoJSONFeature | null {
-        const firstGeometry = this.geometries[0];
-        if (firstGeometry) {
+        // Handle single LineString
+        if (this.geometries.length === 1) {
+            const firstGeometry = this.geometries[0];
+            if (!firstGeometry) {
+                return {
+                    type: 'Feature',
+                    geometry: { type: 'LineString', coordinates: [] },
+                    properties: this.properties
+                };
+            }
+
             return {
                 type: 'Feature',
                 geometry: { type: 'LineString', coordinates: firstGeometry.coords },
                 properties: this.properties
             };
         }
-        return null;
-    }
 
-    private _multiFeature(): GeoJSONFeature {
+        // Handle multiple LineStrings as MultiLineString
         const coordinates: Position[][] = this.geometries
             .filter(geom => geom !== undefined)
             .map(geom => geom.coords);
@@ -78,32 +83,37 @@ export class Arc {
      * @example
      * ```typescript
      * const arc = new Arc({ name: 'test-arc' });
-     * console.log(arc.wkt()); // "LINESTRING EMPTY" or "LINESTRING(lon lat, lon lat, ...)"
+     * console.log(arc.wkt()); // "LINESTRING EMPTY" or "LINESTRING(lon lat,lon lat,...)"
      * ```
      */
     wkt(): string {
-        const wktParts: string[] = [];
+        if (this.geometries.length === 0) {
+            return '';
+        }
 
+        let wktParts: string[] = [];
+        
         for (const geometry of this.geometries) {
-            wktParts.push(this._wktForGeometry(geometry));
+            if (!geometry || geometry.coords.length === 0) {
+                wktParts.push('LINESTRING EMPTY');
+                continue;
+            }
+
+            const coordStrings = geometry.coords
+                .filter(coord => coord !== undefined)
+                .map(coord => {
+                    const lon = coord[0] ?? 0;
+                    const lat = coord[1] ?? 0;
+                    return `${lon} ${lat}`;
+                });
+
+            if (coordStrings.length === 0) {
+                wktParts.push('LINESTRING EMPTY');
+            } else {
+                wktParts.push(`LINESTRING(${coordStrings.join(',')})`);
+            }
         }
 
         return wktParts.join('; ');
-    }
-
-    private _wktForGeometry(geometry?: LineString): string {
-        if (!geometry || geometry.coords.length === 0) {
-            return 'LINESTRING EMPTY';
-        }
-
-        const coordStrings = geometry.coords
-            .filter(coord => coord !== undefined)
-            .map(coord => `${coord[0] ?? 0} ${coord[1] ?? 0}`);
-
-        if (coordStrings.length === 0) {
-            return 'LINESTRING EMPTY';
-        }
-
-        return `LINESTRING(${coordStrings.join(', ')})`;
     }
 }

@@ -1,8 +1,8 @@
-import type { CoordinatePoint, ArcOptions } from './types.js';
-import { Coord } from './coord.js';
-import { Arc } from './arc.js';
-import { LineString } from './line-string.js';
-import { roundCoords, R2D } from './utils.js';
+import type { CoordinatePoint, ArcOptions } from './types';
+import { Coord } from './coord';
+import { Arc } from './arc';
+import { LineString } from './line-string';
+import { roundCoords, R2D } from './utils';
 
 /**
  * Great Circle calculation class
