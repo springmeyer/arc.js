@@ -1,6 +1,6 @@
 {
   "name": "arc",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "draw great circle arcs",
   "url": "https://github.com/springmeyer/arc.js",
   "keywords": [
@@ -9,7 +9,8 @@
     "globe",
     "rhumb line",
     "crow flies",
-    "great circle"
+    "great circle",
+    "typescript"
   ],
   "contributors": [
     "Dane Springmeyer <dane@dbsgeo.com>"
@@ -23,14 +24,29 @@
       "type": "BSD"
     }
   ],
-  "main": "./index",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE.md",
+    "CHANGELOG.md"
+  ],
   "engines": {
     "node": ">=0.4.0"
   },
   "scripts": {
-    "test": "tape test/*.js"
+    "build": "npm run clean && tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist/",
+    "test": "npm run build && tape test/*.js",
+    "prepublishOnly": "npm run build && npm test"
   },
   "devDependencies": {
-    "tape": "~5.5.3"
+    "@types/geojson": "^7946.0.16",
+    "@types/node": "^20.0.0",
+    "tape": "~5.5.3",
+    "typescript": "^5.0.0"
   }
 }
