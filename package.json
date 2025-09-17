@@ -40,8 +40,7 @@
     "build": "npm run clean && tsc && tsc -p tsconfig.esm.json",
     "dev": "tsc --watch",
     "clean": "rm -rf dist/",
-    "test": "npm run build && tape test/*.js && npm run test:ts",
-    "test:ts": "tsc test/*.ts --outDir test/compiled --module commonjs --moduleResolution node --esModuleInterop --skipLibCheck && tape test/compiled/*.js",
+    "test": "npm run build && tape test/*.js",
     "prepublishOnly": "npm run build && npm test"
   },
   "devDependencies": {

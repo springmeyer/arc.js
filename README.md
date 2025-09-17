@@ -1,5 +1,5 @@
 # arc.js
-> Calculate great circles routes as lines in GeoJSON or WKT format.
+> Calculate great circle routes as lines in GeoJSON or WKT format.
 
 Algorithms from https://edwilliams.org/avform.htm#Intermediate
 
@@ -18,17 +18,29 @@ BSD
 
 ## Usage
 
-Require the library in node.js like:
+### JavaScript (CommonJS)
 ```js
 var arc = require('arc');
 ```
 
-Use in the browser like:
+### JavaScript (ES Modules)
+```js
+import * as arc from 'arc';
+```
+
+### TypeScript
+```typescript
+import { GreatCircle, Coord, Arc, CoordinatePoint } from 'arc';
+```
+
+### Browser (UMD)
 ```html
 <script src="./arc.js"></script>
 ```
 
 ## API
+
+### JavaScript Examples
 
 **1)** Create start and end coordinates
 
@@ -54,7 +66,42 @@ var generator = new arc.GreatCircle(start, end, {'name': 'Seattle to DC'});
 Then call the `Arc` function on the `GreatCircle` object to generate a line:
 
 ```js
-var line = generator.Arc(100,{offset:10});
+var line = generator.Arc(100, {offset: 10});
+```
+
+### TypeScript Examples
+
+**1)** Import types and create coordinates
+
+```typescript
+import { GreatCircle, CoordinatePoint, ArcOptions } from 'arc';
+
+const start: CoordinatePoint = { x: -122, y: 48 };
+const end: CoordinatePoint = { x: -77, y: 39 };
+```
+
+**2)** Create GreatCircle with typed properties
+
+```typescript
+interface RouteProperties {
+  name: string;
+  color?: string;
+  distance?: number;
+}
+
+const properties: RouteProperties = { name: 'Seattle to DC', color: 'blue' };
+const generator = new GreatCircle(start, end, properties);
+```
+
+**3)** Generate arc with typed options
+
+```typescript
+const options: ArcOptions = { offset: 10 };
+const line = generator.Arc(100, options);
+
+// TypeScript knows the return type is Arc
+const geojson = line.json(); // Returns GeoJSONFeature
+const wkt = line.wkt();      // Returns string
 ```
 
 The `line` will be a raw sequence of the start and end coordinates plus an arc of
@@ -103,6 +150,19 @@ Or to WKT (Well known text):
 ```js
 > line.wkt();
 'LINESTRING(-122 48,-112.061619 47.724167,-102.384043 46.608131,-93.227188 44.716217,-84.748239 42.144155,-77 38.999999)'
+```
+
+## TypeScript
+
+```typescript
+import { GreatCircle, CoordinatePoint } from 'arc';
+
+const start: CoordinatePoint = { x: -122, y: 48 };
+const end: CoordinatePoint = { x: -77, y: 39 };
+const gc = new GreatCircle(start, end);
+```
+
+Available types: `CoordinatePoint`, `ArcOptions`, `Coord`, `GreatCircle`, `Arc`, `GeoJSONFeature`
 ```
 
 It is then up to you to add up these features to create fully fledged geodata. See the examples/ directory for sample code to create a GeoJSON feature collection from multiple routes.
