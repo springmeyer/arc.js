@@ -18,24 +18,45 @@ BSD
 
 ## Usage
 
-### JavaScript (CommonJS)
+### Node.js (CommonJS)
+For Node.js projects using CommonJS modules:
 ```js
 var arc = require('arc');
+var gc = new arc.GreatCircle({x: -122, y: 48}, {x: -77, y: 39});
 ```
 
-### JavaScript (ES Modules)
+### Node.js (ES Modules)
+For Node.js projects using ES modules:
 ```js
 import * as arc from 'arc';
+const gc = new arc.GreatCircle({x: -122, y: 48}, {x: -77, y: 39});
 ```
 
 ### TypeScript
+Full TypeScript support with type definitions:
 ```typescript
 import { GreatCircle, Coord, Arc, CoordinatePoint } from 'arc';
+
+const start: CoordinatePoint = { x: -122, y: 48 };
+const end: CoordinatePoint = { x: -77, y: 39 };
+const gc = new GreatCircle(start, end);
 ```
 
-### Browser (UMD)
+### Browser
+For direct browser usage (creates global `arc` object):
 ```html
 <script src="./arc.js"></script>
+<script>
+  var gc = new arc.GreatCircle({x: -122, y: 48}, {x: -77, y: 39});
+</script>
+```
+
+### Bundlers (Webpack, Rollup, etc.)
+Works with all modern bundlers:
+```js
+import { GreatCircle } from 'arc';
+// or
+const { GreatCircle } = require('arc');
 ```
 
 ## API

@@ -1,7 +1,7 @@
 'use strict';
 
 var test = require('tape').test;
-var arc = require('../');
+var arc = require('../dist');
 
 test('Coord: Basic properties', function(t) {
     var coord = new arc.Coord(0, 0);

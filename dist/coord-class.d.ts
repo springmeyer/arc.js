@@ -42,4 +42,4 @@ export declare class Coord {
      */
     antipode(): Coord;
 }
-//# sourceMappingURL=coord.d.ts.map
+//# sourceMappingURL=coord-class.d.ts.map

@@ -1,4 +1,4 @@
-import { LineString } from './line-string.js';
+import { LineString } from './line-string-class.js';
 import type { GeoJSONFeature } from './types.js';
 /**
  * Arc class representing the result of great circle calculations
@@ -42,4 +42,4 @@ export declare class Arc {
      */
     wkt(): string;
 }
-//# sourceMappingURL=arc.d.ts.map
+//# sourceMappingURL=arc-class.d.ts.map

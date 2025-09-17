@@ -29,6 +29,7 @@
   "types": "./dist/index.d.ts",
   "files": [
     "dist/",
+    "arc.js",
     "README.md",
     "LICENSE.md",
     "CHANGELOG.md"
@@ -37,16 +38,17 @@
     "node": ">=0.4.0"
   },
   "scripts": {
-    "build": "npm run clean && tsc && tsc -p tsconfig.esm.json",
-    "dev": "tsc --watch",
-    "clean": "rm -rf dist/",
-    "test": "npm run build && tape test/*.js",
-    "prepublishOnly": "npm run build && npm test"
+    "build": "npm run clean && tsc && tsc -p tsconfig.esm.json && npm run build:browser",
+    "build:browser": "esbuild src/index.ts --bundle --format=cjs --outfile=arc.js --platform=node",
+    "clean": "rm -rf dist/ && rm -f arc.js",
+    "test": "for file in test/*.test.js; do echo \"Running $file...\"; node \"$file\" || exit 1; done",
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "@types/geojson": "^7946.0.16",
     "@types/node": "^20.0.0",
     "@types/tape": "^5.8.1",
+    "esbuild": "^0.25.9",
     "tape": "~5.5.3",
     "typescript": "^5.0.0"
   }

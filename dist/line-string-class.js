@@ -13,4 +13,4 @@ class LineString {
     }
 }
 exports.LineString = LineString;
-//# sourceMappingURL=line-string.js.map
+//# sourceMappingURL=line-string-class.js.map

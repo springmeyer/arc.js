@@ -58,4 +58,4 @@ class Coord {
     }
 }
 exports.Coord = Coord;
-//# sourceMappingURL=coord.js.map
+//# sourceMappingURL=coord-class.js.map

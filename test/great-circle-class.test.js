@@ -1,7 +1,7 @@
 'use strict';
 
 var test = require('tape').test;
-var arc = require('../');
+var arc = require('../dist');
 
 test('GreatCircle: Basic construction and interpolation', function(t) {
     var gc = new arc.GreatCircle({

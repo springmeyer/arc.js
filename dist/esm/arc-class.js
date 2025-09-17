@@ -104,4 +104,4 @@ export class Arc {
         return wktParts.join('; ');
     }
 }
-//# sourceMappingURL=arc.js.map
+//# sourceMappingURL=arc-class.js.map

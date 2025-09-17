@@ -54,4 +54,4 @@ export class Coord {
         return new Coord(anti_lon, anti_lat);
     }
 }
-//# sourceMappingURL=coord.js.map
+//# sourceMappingURL=coord-class.js.map

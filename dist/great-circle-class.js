@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GreatCircle = void 0;
-const coord_js_1 = require("./coord.js");
-const arc_js_1 = require("./arc.js");
-const line_string_js_1 = require("./line-string.js");
+const coord_class_js_1 = require("./coord-class.js");
+const arc_class_js_1 = require("./arc-class.js");
+const line_string_class_js_1 = require("./line-string-class.js");
 const utils_js_1 = require("./utils.js");
 /**
  * Great Circle calculation class
@@ -31,8 +31,8 @@ class GreatCircle {
         if (!end || end.x === undefined || end.y === undefined) {
             throw new Error("GreatCircle constructor expects two args: start and end objects with x and y properties");
         }
-        this.start = new coord_js_1.Coord(start.x, start.y);
-        this.end = new coord_js_1.Coord(end.x, end.y);
+        this.start = new coord_class_js_1.Coord(start.x, start.y);
+        this.end = new coord_class_js_1.Coord(end.x, end.y);
         this.properties = properties || {};
         const w = this.start.x - this.end.x;
         const h = this.start.y - this.end.y;
@@ -192,9 +192,9 @@ class GreatCircle {
                 poNewLS0.push([first_pass[l]?.[0] ?? 0, first_pass[l]?.[1] ?? 0]);
             }
         }
-        const arc = new arc_js_1.Arc(this.properties);
+        const arc = new arc_class_js_1.Arc(this.properties);
         for (let m = 0; m < poMulti.length; ++m) {
-            const line = new line_string_js_1.LineString();
+            const line = new line_string_class_js_1.LineString();
             arc.geometries.push(line);
             const points = poMulti[m];
             if (points) {
@@ -210,4 +210,4 @@ class GreatCircle {
     }
 }
 exports.GreatCircle = GreatCircle;
-//# sourceMappingURL=great-circle.js.map
+//# sourceMappingURL=great-circle-class.js.map
