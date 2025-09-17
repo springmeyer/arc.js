@@ -1,6 +1,6 @@
-import type { CoordinatePoint, ArcOptions } from './types';
-import { Coord } from './coord';
-import { Arc } from './arc';
+import type { CoordinatePoint, ArcOptions } from './types.js';
+import { Coord } from './coord.js';
+import { Arc } from './arc.js';
 /**
  * Great Circle calculation class
  * http://en.wikipedia.org/wiki/Great-circle_distance

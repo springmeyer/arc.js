@@ -1,6 +1,6 @@
-export { Coord } from './coord';
-export { Arc } from './arc';
-export { GreatCircle } from './great-circle';
-export { roundCoords, D2R, R2D } from './utils';
-export type { CoordinatePoint, ArcOptions, GeoJSONFeature, LineString, MultiLineString } from './types';
+export { Coord } from './coord.js';
+export { Arc } from './arc.js';
+export { GreatCircle } from './great-circle.js';
+export { roundCoords, D2R, R2D } from './utils.js';
+export type { CoordinatePoint, ArcOptions, GeoJSONFeature, LineString, MultiLineString } from './types.js';
 //# sourceMappingURL=index.d.ts.map

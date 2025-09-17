@@ -1,7 +1,7 @@
-import { Coord } from './coord';
-import { Arc } from './arc';
-import { LineString } from './line-string';
-import { roundCoords, R2D } from './utils';
+import { Coord } from './coord.js';
+import { Arc } from './arc.js';
+import { LineString } from './line-string.js';
+import { roundCoords, R2D } from './utils.js';
 /**
  * Great Circle calculation class
  * http://en.wikipedia.org/wiki/Great-circle_distance

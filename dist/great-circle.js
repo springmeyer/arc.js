@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GreatCircle = void 0;
-const coord_1 = require("./coord");
-const arc_1 = require("./arc");
-const line_string_1 = require("./line-string");
-const utils_1 = require("./utils");
+const coord_js_1 = require("./coord.js");
+const arc_js_1 = require("./arc.js");
+const line_string_js_1 = require("./line-string.js");
+const utils_js_1 = require("./utils.js");
 /**
  * Great Circle calculation class
  * http://en.wikipedia.org/wiki/Great-circle_distance
@@ -31,8 +31,8 @@ class GreatCircle {
         if (!end || end.x === undefined || end.y === undefined) {
             throw new Error("GreatCircle constructor expects two args: start and end objects with x and y properties");
         }
-        this.start = new coord_1.Coord(start.x, start.y);
-        this.end = new coord_1.Coord(end.x, end.y);
+        this.start = new coord_js_1.Coord(start.x, start.y);
+        this.end = new coord_js_1.Coord(end.x, end.y);
         this.properties = properties || {};
         const w = this.start.x - this.end.x;
         const h = this.start.y - this.end.y;
@@ -67,8 +67,8 @@ class GreatCircle {
         const x = A * Math.cos(this.start.y) * Math.cos(this.start.x) + B * Math.cos(this.end.y) * Math.cos(this.end.x);
         const y = A * Math.cos(this.start.y) * Math.sin(this.start.x) + B * Math.cos(this.end.y) * Math.sin(this.end.x);
         const z = A * Math.sin(this.start.y) + B * Math.sin(this.end.y);
-        const lat = utils_1.R2D * Math.atan2(z, Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
-        const lon = utils_1.R2D * Math.atan2(y, x);
+        const lat = utils_js_1.R2D * Math.atan2(z, Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
+        const lon = utils_js_1.R2D * Math.atan2(y, x);
         return [lon, lat];
     }
     /**
@@ -192,16 +192,16 @@ class GreatCircle {
                 poNewLS0.push([first_pass[l]?.[0] ?? 0, first_pass[l]?.[1] ?? 0]);
             }
         }
-        const arc = new arc_1.Arc(this.properties);
+        const arc = new arc_js_1.Arc(this.properties);
         for (let m = 0; m < poMulti.length; ++m) {
-            const line = new line_string_1.LineString();
+            const line = new line_string_js_1.LineString();
             arc.geometries.push(line);
             const points = poMulti[m];
             if (points) {
                 for (let j0 = 0; j0 < points.length; ++j0) {
                     const point = points[j0];
                     if (point) {
-                        line.move_to((0, utils_1.roundCoords)([point[0], point[1]]));
+                        line.move_to((0, utils_js_1.roundCoords)([point[0], point[1]]));
                     }
                 }
             }

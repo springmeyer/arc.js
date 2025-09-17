@@ -1,5 +1,5 @@
-import type { GeoJSONFeature } from './types';
-import { LineString } from './line-string';
+import { LineString } from './line-string.js';
+import type { GeoJSONFeature } from './types.js';
 /**
  * Arc class representing the result of great circle calculations
  *

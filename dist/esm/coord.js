@@ -1,4 +1,4 @@
-import { D2R } from './utils';
+import { D2R } from './utils.js';
 /**
  * Coordinate class representing a point with longitude and latitude
  *

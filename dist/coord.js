@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Coord = void 0;
-const utils_1 = require("./utils");
+const utils_js_1 = require("./utils.js");
 /**
  * Coordinate class representing a point with longitude and latitude
  *
@@ -23,8 +23,8 @@ class Coord {
     constructor(lon, lat) {
         this.lon = lon;
         this.lat = lat;
-        this.x = utils_1.D2R * lon;
-        this.y = utils_1.D2R * lat;
+        this.x = utils_js_1.D2R * lon;
+        this.y = utils_js_1.D2R * lat;
     }
     /**
      * Get a string representation of the coordinate
