@@ -7,4 +7,4 @@ export declare class LineString {
     length: number;
     move_to(coord: Position): void;
 }
-//# sourceMappingURL=line-string-class.d.ts.map
+//# sourceMappingURL=line-string.d.ts.map

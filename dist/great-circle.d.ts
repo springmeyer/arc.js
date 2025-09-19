@@ -1,6 +1,6 @@
 import type { CoordinatePoint, ArcOptions } from './types.js';
-import { Coord } from './coord-class.js';
-import { Arc } from './arc-class.js';
+import { Coord } from './coord.js';
+import { Arc } from './arc.js';
 /**
  * Great Circle calculation class
  * http://en.wikipedia.org/wiki/Great-circle_distance
@@ -50,4 +50,4 @@ export declare class GreatCircle {
      */
     Arc(npoints?: number, options?: ArcOptions): Arc;
 }
-//# sourceMappingURL=great-circle-class.d.ts.map
+//# sourceMappingURL=great-circle.d.ts.map

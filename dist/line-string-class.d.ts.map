@@ -1,1 +1,0 @@
-{"version":3,"file":"line-string-class.d.ts","sourceRoot":"","sources":["../src/line-string-class.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,QAAQ,EAAE,MAAM,YAAY,CAAC;AAE3C;;GAEG;AACH,qBAAa,UAAU;IACZ,MAAM,EAAE,QAAQ,EAAE,CAAM;IACxB,MAAM,EAAE,MAAM,CAAK;IAE1B,OAAO,CAAC,KAAK,EAAE,QAAQ,GAAG,IAAI;CAIjC"}

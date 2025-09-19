@@ -47,7 +47,7 @@ function roundCoords(coords) {
 var D2R = Math.PI / 180;
 var R2D = 180 / Math.PI;
 
-// src/coord-class.ts
+// src/coord.ts
 var Coord = class _Coord {
   lon;
   lat;
@@ -91,7 +91,7 @@ var Coord = class _Coord {
   }
 };
 
-// src/arc-class.ts
+// src/arc.ts
 var Arc = class {
   properties = {};
   geometries = [];
@@ -179,7 +179,7 @@ var Arc = class {
   }
 };
 
-// src/line-string-class.ts
+// src/line-string.ts
 var LineString = class {
   coords = [];
   length = 0;
@@ -189,7 +189,7 @@ var LineString = class {
   }
 };
 
-// src/great-circle-class.ts
+// src/great-circle.ts
 var GreatCircle = class {
   start;
   end;

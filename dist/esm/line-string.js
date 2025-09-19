@@ -9,4 +9,4 @@ export class LineString {
         this.coords.push(coord);
     }
 }
-//# sourceMappingURL=line-string-class.js.map
+//# sourceMappingURL=line-string.js.map

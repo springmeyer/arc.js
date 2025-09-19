@@ -1,141 +1,168 @@
 /**
- * TypeScript-specific tests for type safety and inference
- * These tests validate that our TypeScript definitions work correctly
+ * TypeScript-specific tests for type safety, inference, and compile-time validation
+ * These tests focus on TypeScript features that aren't covered by functional tests
  */
 
-import test from 'tape';
-import { Coord, Arc, GreatCircle, CoordinatePoint, ArcOptions } from '../dist/index';
-import type { GeoJSONFeature } from '../dist/index';
+import { Coord } from '@/coord';
+import { GreatCircle } from '@/great-circle';
+import { Arc } from '@/arc';
+import type { CoordinatePoint, ArcOptions, GeoJSONFeature } from '@/types';
+import { expectTypeOf } from 'expect-type';
 
-test('TypeScript: Coord type inference and methods', (t) => {
-    const coord: Coord = new Coord(-122.4194, 37.7749);
-    
-    // Properties should be numbers
-    t.equal(typeof coord.lon, 'number', 'lon should be number');
-    t.equal(typeof coord.lat, 'number', 'lat should be number');
-    t.equal(typeof coord.x, 'number', 'x should be number');
-    t.equal(typeof coord.y, 'number', 'y should be number');
-    
-    // Methods should return correct types
-    const view: string = coord.view();
-    const antipode: Coord = coord.antipode();
-    
-    t.equal(typeof view, 'string', 'view() should return string');
-    t.ok(antipode instanceof Coord, 'antipode() should return Coord instance');
-    
-    t.end();
-});
+// Test data with proper TypeScript typing
+const sanFrancisco: CoordinatePoint = { x: -122.4194, y: 37.7749 };
+const newYork: CoordinatePoint = { x: -74.0059, y: 40.7128 };
+const testProperties = { 
+  name: 'TypeScript Test Route', 
+  id: 'ts-001',
+  metadata: { framework: 'Jest', language: 'TypeScript' }
+};
 
-test('TypeScript: CoordinatePoint interface compatibility', (t) => {
-    const start: CoordinatePoint = { x: -122.4194, y: 37.7749 };
-    const end: CoordinatePoint = { x: -74.0059, y: 40.7128 };
-    
-    // Should accept CoordinatePoint objects
-    const gc: GreatCircle = new GreatCircle(start, end);
-    
-    t.ok(gc instanceof GreatCircle, 'GreatCircle should accept CoordinatePoint objects');
-    t.equal(typeof gc.start.lon, 'number', 'start coordinate should be converted to Coord');
-    t.equal(typeof gc.end.lon, 'number', 'end coordinate should be converted to Coord');
-    
-    t.end();
-});
+describe('TypeScript', () => {
+  describe('Type inference and safety', () => {
+    test('should infer correct types for Coord class', () => {
+      const coord = new Coord(-122.4194, 37.7749);
+      
+      // Test TypeScript type inference for properties
+      expectTypeOf(coord.lon).toEqualTypeOf<number>();
+      expectTypeOf(coord.lat).toEqualTypeOf<number>();
+      expectTypeOf(coord.x).toEqualTypeOf<number>();
+      expectTypeOf(coord.y).toEqualTypeOf<number>();
+      
+      // Test TypeScript type inference for method return types
+      expectTypeOf(coord.view()).toEqualTypeOf<string>();
+      expectTypeOf(coord.antipode()).toEqualTypeOf<Coord>();
+      
+      // Runtime validation that types match actual values
+      expect(typeof coord.lon).toBe('number');
+      expect(typeof coord.view()).toBe('string');
+      expect(coord.antipode()).toBeInstanceOf(Coord);
+    });
 
-test('TypeScript: GreatCircle with options and properties', (t) => {
-    const start: CoordinatePoint = { x: -122, y: 48 };
-    const end: CoordinatePoint = { x: -77, y: 39 };
-    const properties = { name: 'Seattle to DC', color: 'blue' };
-    
-    // Constructor with all parameters
-    const gc: GreatCircle = new GreatCircle(start, end, properties);
-    
-    // Arc method with options
-    const options: ArcOptions = { offset: 15 };
-    const arc: Arc = gc.Arc(100, options);
-    
-    // Method return types
-    const interpolated: [number, number] = gc.interpolate(0.5);
-    
-    t.ok(gc instanceof GreatCircle, 'GreatCircle constructor works with types');
-    t.ok(arc instanceof Arc, 'Arc() method returns Arc instance');
-    t.equal(interpolated.length, 2, 'interpolate() returns coordinate pair');
-    t.equal(typeof interpolated[0], 'number', 'interpolated longitude is number');
-    t.equal(typeof interpolated[1], 'number', 'interpolated latitude is number');
-    
-    t.end();
-});
+    test('should accept CoordinatePoint interface', () => {
+      // Test interface compatibility and type inference
+      const gc = new GreatCircle(sanFrancisco, newYork, testProperties);
+      
+      expectTypeOf(sanFrancisco).toEqualTypeOf<CoordinatePoint>();
+      expectTypeOf(gc).toEqualTypeOf<GreatCircle>();
+      
+      expect(gc).toBeInstanceOf(GreatCircle);
+      expect(gc.properties).toEqual(testProperties);
+    });
 
-test('TypeScript: Arc class and GeoJSON output types', (t) => {
-    const arc: Arc = new Arc({ name: 'test-arc', id: 123 });
-    
-    // Properties should be flexible
-    arc.properties.customField = 'custom value';
-    arc.properties.numericField = 42;
-    
-    // JSON output should be properly typed
-    const geojson: GeoJSONFeature = arc.json();
-    const featureType: 'Feature' = geojson.type;
-    
-    // WKT output
-    const wkt: string = arc.wkt();
-    
-    t.equal(featureType, 'Feature', 'GeoJSON type should be Feature');
-    t.equal(typeof wkt, 'string', 'WKT should return string');
-    t.ok(geojson.geometry, 'GeoJSON should have geometry');
-    t.ok(geojson.properties, 'GeoJSON should have properties');
-    
-    t.end();
-});
+    test('should handle optional ArcOptions parameter', () => {
+      const gc = new GreatCircle(sanFrancisco, newYork);
+      
+      // Test method overloads - without options
+      const arc1 = gc.Arc(10);
+      expectTypeOf(arc1).toEqualTypeOf<Arc>();
+      
+      // Test method overloads - with options
+      const options: ArcOptions = { offset: 15 };
+      const arc2 = gc.Arc(10, options);
+      expectTypeOf(arc2).toEqualTypeOf<Arc>();
+      
+      expect(arc1).toBeInstanceOf(Arc);
+      expect(arc2).toBeInstanceOf(Arc);
+    });
+  });
 
-test('TypeScript: Method chaining and fluent API', (t) => {
-    const result = new GreatCircle({ x: -122, y: 48 }, { x: -77, y: 39 })
-        .Arc(50)
-        .json();
-    
-    // Result should be properly typed
-    const featureType = result.type; // Should be 'Feature'
-    const hasGeometry = result.geometry !== null;
-    
-    t.equal(featureType, 'Feature', 'Chained result should be Feature');
-    t.ok(hasGeometry, 'Chained result should have geometry');
-    
-    t.end();
-});
-
-test('TypeScript: Type constraints and validation', (t) => {
-    // These should compile without errors
-    const validCoord = new Coord(-180, -90);  // Valid range
-    const validCoord2 = new Coord(180, 90);   // Valid range
-    
-    // CoordinatePoint must have x and y
-    const validPoint: CoordinatePoint = { x: 0, y: 0 };
-    
-    // Properties can be any object
-    const validProps: Record<string, any> = { 
-        name: 'test', 
-        count: 42, 
+  describe('Generic and flexible typing', () => {
+    test('should allow flexible properties objects', () => {
+      // Test that properties accept flexible object structures
+      const flexibleProps = {
+        name: 'Flexible Route',
+        count: 42,
         active: true,
-        metadata: { nested: 'value' }
-    };
-    
-    const arc = new Arc(validProps);
-    
-    t.ok(validCoord instanceof Coord, 'Valid coordinates should work');
-    t.ok(validCoord2 instanceof Coord, 'Valid coordinates should work');
-    t.equal(typeof validPoint.x, 'number', 'CoordinatePoint.x should be number');
-    t.equal(typeof validPoint.y, 'number', 'CoordinatePoint.y should be number');
-    t.ok(arc instanceof Arc, 'Arc with valid properties should work');
-    
-    t.end();
-});
+        tags: ['arc', 'typescript'],
+        config: { precision: 6, units: 'degrees' }
+      };
+      
+      const arc = new Arc(flexibleProps);
+      
+      // Runtime validation that property types are preserved
+      expect(arc.properties.name).toBe('Flexible Route');
+      expect(arc.properties.count).toBe(42);
+      expect(arc.properties.active).toBe(true);
+      expect(Array.isArray(arc.properties.tags)).toBe(true);
+      expect(typeof arc.properties.config).toBe('object');
+    });
 
-test('TypeScript: Import patterns work correctly', (t) => {
-    // Named imports should work (what we're using)
-    t.ok(typeof Coord === 'function', 'Coord should be importable');
-    t.ok(typeof Arc === 'function', 'Arc should be importable');
-    t.ok(typeof GreatCircle === 'function', 'GreatCircle should be importable');
-    
-    // Type imports should not affect runtime (GeoJSONFeature is type-only)
-    t.pass('Type imports work correctly and do not affect runtime');
-    
-    t.end();
+    test('should support method chaining with proper types', () => {
+      const result = new GreatCircle(sanFrancisco, newYork, testProperties)
+        .Arc(25)
+        .json();
+      
+      // Test method chaining type inference
+      expectTypeOf(result).toEqualTypeOf<GeoJSONFeature>();
+      expectTypeOf(result.type).toEqualTypeOf<'Feature'>();
+      
+      expect(result.type).toBe('Feature');
+      expect(result.properties).toEqual(testProperties);
+    });
+  });
+
+  describe('Compile-time type validation', () => {
+    test('should enforce CoordinatePoint structure', () => {
+      // Test valid CoordinatePoint interface usage (compile-time validation)
+      const validPoint1: CoordinatePoint = { x: 0, y: 0 };
+      const validPoint2: CoordinatePoint = { x: -180, y: -90 };
+      const validPoint3: CoordinatePoint = { x: 180, y: 90 };
+      
+      expect(validPoint1.x).toBe(0);
+      expect(validPoint2.x).toBe(-180);
+      expect(validPoint3.x).toBe(180);
+      
+      // TypeScript would catch these at compile time:
+      // const invalid1: CoordinatePoint = { x: 0 }; // Missing y
+      // const invalid2: CoordinatePoint = { y: 0 }; // Missing x
+      // const invalid3: CoordinatePoint = { lon: 0, lat: 0 }; // Wrong properties
+    });
+
+    test('should provide proper return type annotations', () => {
+      const gc = new GreatCircle(sanFrancisco, newYork);
+      
+      // Test tuple return type inference
+      const interpolated = gc.interpolate(0.5);
+      expectTypeOf(interpolated).toEqualTypeOf<[number, number]>();
+      
+      expect(Array.isArray(interpolated)).toBe(true);
+      expect(interpolated).toHaveLength(2);
+      expect(typeof interpolated[0]).toBe('number');
+      expect(typeof interpolated[1]).toBe('number');
+    });
+  });
+
+  describe('Module system compatibility', () => {
+    test('should support named imports from source', () => {
+      // Runtime validation that imports resolved to constructors
+      expect(typeof Coord).toBe('function');
+      expect(typeof GreatCircle).toBe('function');
+      expect(typeof Arc).toBe('function');
+      
+      // Test that imported classes are usable constructors
+      const coord = new Coord(0, 0);
+      const gc = new GreatCircle(sanFrancisco, newYork);
+      const arc = new Arc();
+      
+      expect(coord).toBeInstanceOf(Coord);
+      expect(gc).toBeInstanceOf(GreatCircle);
+      expect(arc).toBeInstanceOf(Arc);
+    });
+
+    test('should handle type-only imports correctly', () => {
+      // Test type-only imports (compile-time only, no runtime footprint)
+      
+      const point: CoordinatePoint = { x: 1, y: 2 };
+      const options: ArcOptions = { offset: 10 };
+      
+      expect(point.x).toBe(1);
+      expect(options.offset).toBe(10);
+      
+      // Type-only imports don't create runtime values
+      // (Can only validate the objects that use these types work correctly)
+      expect(point).toBeDefined();
+      expect(options).toBeDefined();
+    });
+  });
 });
