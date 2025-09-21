@@ -97,7 +97,6 @@ The `prepublishOnly` script ensures a fresh build before publishing.
 - **Output**: ES2022 for broad compatibility
 - **Paths**: `@/` alias maps to `src/` in tests
 - **Declarations**: Full `.d.ts` generation for consumers
-- 
 ### Adding New Types
 
 1. Add interfaces/types to `src/types.ts`. You can see that it makes use of some GeoJSON types, but in the future it may want to use more of them.
