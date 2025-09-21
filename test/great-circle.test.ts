@@ -105,5 +105,87 @@ describe('GreatCircle', () => {
         new GreatCircle(startPoint, null as any);
       }).toThrow(/expects two args/);
     });
+
+    test('should validate start point with undefined x', () => {
+      expect(() => {
+        new GreatCircle({ x: undefined, y: 0 } as any, endPoint);
+      }).toThrow(/expects two args/);
+    });
+
+    test('should validate end point with undefined y', () => {
+      expect(() => {
+        new GreatCircle(startPoint, { x: 0, y: undefined } as any);
+      }).toThrow(/expects two args/);
+    });
+  });
+
+  describe('Arc generation edge cases', () => {
+    test('should handle npoints <= 2', () => {
+      const gc = new GreatCircle(seattleCoords, dcCoords);
+      const arc = gc.Arc(2);
+      
+      expect(arc.geometries).toHaveLength(1);
+      expect(arc.geometries[0]?.coords).toHaveLength(2);
+    });
+
+    test('should handle npoints = 0', () => {
+      const gc = new GreatCircle(seattleCoords, dcCoords);
+      const arc = gc.Arc(0);
+      
+      expect(arc.geometries).toHaveLength(1);
+      expect(arc.geometries[0]?.coords).toHaveLength(2);
+    });
+
+    test('should handle npoints = 1', () => {
+      const gc = new GreatCircle(seattleCoords, dcCoords);
+      const arc = gc.Arc(1);
+      
+      expect(arc.geometries).toHaveLength(1);
+      expect(arc.geometries[0]?.coords).toHaveLength(2);
+    });
+
+    test('should handle undefined npoints', () => {
+      const gc = new GreatCircle(seattleCoords, dcCoords);
+      const arc = gc.Arc(undefined as any);
+      
+      expect(arc.geometries).toHaveLength(1);
+      expect(arc.geometries[0]?.coords).toHaveLength(2);
+    });
+  });
+
+  describe('Dateline crossing', () => {
+    test('should handle routes that cross the dateline', () => {
+      // Route from Pacific to Asia that crosses dateline
+      const pacific = { x: 170, y: 0 };
+      const asia = { x: -170, y: 0 };
+      
+      const gc = new GreatCircle(pacific, asia);
+      const arc = gc.Arc(10, { offset: 5 });
+      
+      expect(arc.geometries.length).toBeGreaterThan(0);
+      
+      // Should potentially create multiple LineStrings for dateline crossing
+      const json = arc.json();
+      expect(json.type).toBe('Feature');
+    });
+
+    test('should handle routes near dateline with high offset', () => {
+      const nearDateline1 = { x: 175, y: 0 };
+      const nearDateline2 = { x: -175, y: 0 };
+      
+      const gc = new GreatCircle(nearDateline1, nearDateline2);
+      const arc = gc.Arc(5, { offset: 20 });
+      
+      expect(arc.geometries.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Error handling', () => {
+    test('should handle NaN calculation errors', () => {
+      // This might trigger NaN in the calculation
+      expect(() => {
+        new GreatCircle({ x: NaN, y: 0 }, endPoint);
+      }).toThrow();
+    });
   });
 });
