@@ -32,6 +32,7 @@
     "arc.js",
     "README.md",
     "LICENSE.md",
+    "GDAL-LICENSE.md",
     "CHANGELOG.md"
   ],
   "engines": {
