@@ -1,4 +1,0 @@
-lon1, lat1, lon2, lat2, name,                other attribute
--122, 48,   -77,  39,   "Seattle to DC",      1.0
--122, 48,   0,    51,   "Seattle to London",  2
--77,  39,   0,    51,   "DC to London",       3.1
