@@ -1,7 +1,9 @@
 # arc.js
 > Calculate great circle routes as lines in GeoJSON or WKT format.
 
-Algorithms from https://edwilliams.org/avform.htm#Intermediate
+[**Try the interactive demo**](https://danespringmeyer.com/arc.js/) - Click to plot great circle arcs on a map!
+
+Algorithms from [Ed Williams' Aviation Formulary](https://edwilliams.org/avform.htm#Intermediate)
 
 Includes basic support for splitting lines that cross the dateline, based on
 a partial port of code from GDAL's OGR library.
@@ -11,14 +13,6 @@ a partial port of code from GDAL's OGR library.
 ```bash
 $ npm install --save arc
 ```
-
-## License
-
-This project is licensed under the BSD license. See [LICENSE.md](LICENSE.md) for details.
-
-### Third-Party Licenses
-
-This project includes code ported from GDAL (Geospatial Data Abstraction Library), which is licensed under the MIT/X11 license. See [GDAL-LICENSE.md](GDAL-LICENSE.md) for the full GDAL license text and attribution details.
 
 ## Usage
 
@@ -190,4 +184,12 @@ const gc = new GreatCircle(start, end);
 Available types: `CoordinatePoint`, `ArcOptions`, `Coord`, `GreatCircle`, `Arc`, `GeoJSONFeature`
 ```
 
-It is then up to you to add up these features to create fully fledged geodata. See the examples/ directory for sample code to create a GeoJSON feature collection from multiple routes.
+It is then up to you to add up these features to create fully fledged geodata. See the [interactive demo](https://danespringmeyer.com/arc.js/) for sample code to create a GeoJSON feature collection from multiple routes.
+
+## License
+
+This project is licensed under the BSD license. See [LICENSE.md](LICENSE.md) for details.
+
+### Third-Party Licenses
+
+This project includes code ported from GDAL (Geospatial Data Abstraction Library), which is licensed under the MIT/X11 license. See [GDAL-LICENSE.md](GDAL-LICENSE.md) for the full GDAL license text and attribution details.
