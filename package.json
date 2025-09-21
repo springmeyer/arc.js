@@ -1,6 +1,6 @@
 {
   "name": "arc",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "draw great circle arcs",
   "url": "https://github.com/springmeyer/arc.js",
   "keywords": [
@@ -9,7 +9,8 @@
     "globe",
     "rhumb line",
     "crow flies",
-    "great circle"
+    "great circle",
+    "typescript"
   ],
   "contributors": [
     "Dane Springmeyer <dane@dbsgeo.com>"
@@ -23,14 +24,38 @@
       "type": "BSD"
     }
   ],
-  "main": "./index",
+  "main": "./dist/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/",
+    "arc.js",
+    "README.md",
+    "LICENSE.md",
+    "CHANGELOG.md"
+  ],
   "engines": {
     "node": ">=0.4.0"
   },
   "scripts": {
-    "test": "tape test/*.js"
+    "build": "npm run clean && tsc && tsc -p tsconfig.esm.json && npm run build:browser",
+    "build:browser": "esbuild src/index.ts --bundle --format=cjs --outfile=arc.js --platform=node",
+    "clean": "rm -rf dist/ && rm -f arc.js",
+    "test": "jest",
+    "test:all": "npm run test && npm run test:build",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:build": "node test/build-output.test.js",
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
-    "tape": "~5.5.3"
+    "@types/geojson": "^7946.0.16",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20.0.0",
+    "esbuild": "^0.25.9",
+    "expect-type": "^1.2.2",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.4.3",
+    "typescript": "^5.0.0"
   }
 }
