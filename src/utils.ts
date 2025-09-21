@@ -32,7 +32,13 @@ export function roundCoords(coords: Position): Position {
     return rounded;
 }
 
-// Constants used across the library
+/**
+ * Convert degrees to radians
+ */
 export const D2R = Math.PI / 180;
+
+/**
+ * Convert radians to degrees
+ */
 export const R2D = 180 / Math.PI;
 
