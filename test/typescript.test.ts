@@ -3,10 +3,7 @@
  * These tests focus on TypeScript features that aren't covered by functional tests
  */
 
-import { Coord } from '@/coord';
-import { GreatCircle } from '@/great-circle';
-import { Arc } from '@/arc';
-import type { CoordinatePoint, ArcOptions, GeoJSONFeature } from '@/types';
+import { Arc, Coord, GreatCircle, CoordinatePoint, ArcOptions, GeoJSONFeature } from '../src';
 import { expectTypeOf } from 'expect-type';
 
 // Test data with proper TypeScript typing

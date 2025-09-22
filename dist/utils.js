@@ -29,7 +29,12 @@ function roundCoords(coords) {
     }
     return rounded;
 }
-// Constants used across the library
+/**
+ * Convert degrees to radians
+ */
 exports.D2R = Math.PI / 180;
+/**
+ * Convert radians to degrees
+ */
 exports.R2D = 180 / Math.PI;
 //# sourceMappingURL=utils.js.map

@@ -1,5 +1,4 @@
-import { Arc } from '@/arc';
-import { LineString } from '@/line-string';
+import { Arc, _LineString } from '../src';
 
 const emptyArcGeoJSON = {
   type: 'Feature',
@@ -74,11 +73,11 @@ describe('Arc', () => {
       const a = new Arc({ name: 'multi-line' });
       
       // Add multiple LineString geometries
-      const line1 = new LineString();
+      const line1 = new _LineString();
       line1.move_to([0, 0]);
       line1.move_to([1, 1]);
       
-      const line2 = new LineString();
+      const line2 = new _LineString();
       line2.move_to([2, 2]);
       line2.move_to([3, 3]);
       
@@ -95,8 +94,8 @@ describe('Arc', () => {
     test('should handle empty LineString geometries', () => {
       const a = new Arc({ name: 'empty-lines' });
       
-      const line1 = new LineString();
-      const line2 = new LineString();
+      const line1 = new _LineString();
+      const line2 = new _LineString();
       line2.move_to([1, 1]);
       
       a.geometries.push(line1, line2);
@@ -113,7 +112,7 @@ describe('Arc', () => {
   describe('WKT output edge cases', () => {
     test('should handle empty geometries in WKT', () => {
       const a = new Arc();
-      const line = new LineString();
+      const line = new _LineString();
       a.geometries.push(line);
       
       expect(a.wkt()).toBe('LINESTRING EMPTY');
@@ -122,11 +121,11 @@ describe('Arc', () => {
     test('should handle multiple geometries in WKT', () => {
       const a = new Arc();
       
-      const line1 = new LineString();
+      const line1 = new _LineString();
       line1.move_to([0, 0]);
       line1.move_to([1, 1]);
       
-      const line2 = new LineString();
+      const line2 = new _LineString();
       line2.move_to([2, 2]);
       
       a.geometries.push(line1, line2);
@@ -137,7 +136,7 @@ describe('Arc', () => {
 
     test('should handle undefined coordinates in WKT', () => {
       const a = new Arc();
-      const line = new LineString();
+      const line = new _LineString();
       line.coords = [[0, 0], [0, 1], [2, 0]]; // Use valid coordinates instead
       a.geometries.push(line);
       

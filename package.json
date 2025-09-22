@@ -40,7 +40,7 @@
   },
   "scripts": {
     "build": "npm run clean && tsc && tsc -p tsconfig.esm.json && npm run build:browser",
-    "build:browser": "esbuild src/index.ts --bundle --format=cjs --outfile=arc.js --platform=node",
+    "build:browser": "esbuild src/index.ts --bundle --format=iife --global-name=arc --outfile=arc.js --platform=browser",
     "clean": "rm -rf dist/ && rm -f arc.js",
     "test": "jest",
     "test:all": "npm run test && npm run test:build",

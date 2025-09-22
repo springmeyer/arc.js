@@ -1,4 +1,4 @@
-import * as arc from '@/index';
+import * as arc from '../src';
 
 describe('Index exports', () => {
   test('should export all public classes and functions', () => {

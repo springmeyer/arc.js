@@ -1,7 +1,7 @@
 import type { CoordinatePoint, ArcOptions } from './types.js';
 import { Coord } from './coord.js';
 import { Arc } from './arc.js';
-import { LineString } from './line-string.js';
+import { _LineString } from './line-string.js';
 import { roundCoords, R2D } from './utils.js';
 
 /*
@@ -215,7 +215,7 @@ export class GreatCircle {
 
         const arc = new Arc(this.properties);
         for (let m = 0; m < poMulti.length; ++m) {
-            const line = new LineString();
+            const line = new _LineString();
             arc.geometries.push(line);
             const points = poMulti[m];
             if (points) {

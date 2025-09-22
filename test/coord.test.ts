@@ -1,4 +1,4 @@
-import { Coord } from '@/coord';
+import { Coord } from '../src';
 
 describe('Coord', () => {
   describe('Basic properties', () => {

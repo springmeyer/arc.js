@@ -11,12 +11,6 @@ module.exports = {
     '**/test/**/*.spec.ts'
   ],
   
-  // Exclude build output test (it's a standalone script)
-  testPathIgnorePatterns: [
-    '/node_modules/',
-    '/test/build-output.test.js'
-  ],
-  
   // Module file extensions
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
   
@@ -31,16 +25,17 @@ module.exports = {
     '^(\\.{1,2}/.*)\\.js$': '$1'
   },
   
+  // Ignore patterns
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/dist/',
+    '/test/build-output.test.js'
+  ],
+  
   // Coverage settings
   collectCoverageFrom: [
     'src/**/*.ts',
     '!src/**/*.d.ts'
-  ],
-  
-  // Ignore patterns
-  testPathIgnorePatterns: [
-    '/node_modules/',
-    '/dist/'
   ],
   
   // Clear mocks between tests
