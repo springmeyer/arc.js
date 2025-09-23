@@ -182,7 +182,6 @@ const gc = new GreatCircle(start, end);
 ```
 
 Available types: `CoordinatePoint`, `ArcOptions`, `Coord`, `GreatCircle`, `Arc`, `GeoJSONFeature`
-```
 
 It is then up to you to add up these features to create fully fledged geodata. See the [interactive demo](https://danespringmeyer.com/arc.js/) for sample code to create a GeoJSON feature collection from multiple routes.
 
