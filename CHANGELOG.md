@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.2.0] - 2025-09-22
 ### Changed
-- TypeScript support with back compatibilty
+- TypeScript support with back compatibilty (From @thomas-hervey)
 
 ## [0.1.4] - 2022-11-16
 ### Changed

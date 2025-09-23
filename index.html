@@ -1,182 +1,550 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>arc.js</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>arc.js - Great Circle Routes Demo</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
     <script src="./arc.js"></script>
     <style>
-      body {
-        margin: 0px;
-        padding: 0px;
-        font:12px/15px 'Helvetica';
-      }
+        * {
+            box-sizing: border-box;
+        }
 
-      .box {
-        display: flex;
-        height: 100vh;
-      }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #333;
+            background-color: #f8f9fa;
+        }
 
-      #map {
-        flex-grow: 6;
-      }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
 
-      #json-dump {
-        height: 80vh;
-      }
+        .header h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 300;
+        }
 
-      #geojson {
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-      }
+        .header p {
+            margin: 0.5rem 0 0 0;
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
 
-      #text {
-        align-self: center;
-      }
+        .container {
+            display: flex;
+            height: calc(100vh - 80px);
+        }
+
+        .map-container {
+            flex: 2;
+            position: relative;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        .sidebar {
+            flex: 1;
+            background: white;
+            border-left: 1px solid #e9ecef;
+            display: flex;
+            flex-direction: column;
+            max-width: 400px;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            background: #f8f9fa;
+        }
+
+        .sidebar-header h3 {
+            margin: 0 0 0.5rem 0;
+            color: #495057;
+            font-size: 1.2rem;
+        }
+
+        .sidebar-header p {
+            margin: 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .controls {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .control-group {
+            margin-bottom: 1rem;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .control-group input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn:hover {
+            background: #0056b3;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .json-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+        }
+
+        .json-container h4 {
+            margin: 0 0 1rem 0;
+            color: #495057;
+            font-size: 1rem;
+        }
+
+        #json-dump {
+            flex: 1;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+            padding: 1rem;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            background: #f8f9fa;
+            resize: vertical;
+            min-height: 200px;
+        }
+
+        .stats {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #e9ecef;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .stats div {
+            margin-bottom: 0.5rem;
+        }
+
+        .stats strong {
+            color: #495057;
+        }
+
+        .instructions {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 4px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .instructions h4 {
+            margin: 0 0 0.5rem 0;
+            color: #0c5460;
+        }
+
+        .instructions ul {
+            margin: 0;
+            padding-left: 1.2rem;
+        }
+
+        .instructions li {
+            margin-bottom: 0.25rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                max-width: none;
+                max-height: 40vh;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="box">
-      <div id="map"></div>
-      <div id="geojson">
-        <h3 id="text">
-          <a href="https://github.com/springmeyer/arc.js">Arc.js with Leaflet</a>: click to plot arcs
-        </h3>
-        <textarea id="json-dump"></textarea>
-      </div>
+    <div class="header">
+        <h1>arc.js</h1>
+        <p>Calculate great circle routes as GeoJSON - Click on the map to create arcs!</p>
     </div>
+
+    <div class="container">
+        <div class="map-container">
+            <div id="map"></div>
+        </div>
+        
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h3>Interactive Demo</h3>
+                <p>Click two points on the map to create a great circle route</p>
+            </div>
+
+            <div class="instructions">
+                <h4>How to use:</h4>
+                <ul>
+                    <li>Click anywhere on the map to set the start point</li>
+                    <li>Click again to set the end point and create an arc</li>
+                    <li>Repeat to create multiple routes</li>
+                    <li>Use the controls below to adjust settings</li>
+                </ul>
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label for="npoints">Number of points:</label>
+                    <input type="number" id="npoints" value="100" min="10" max="1000" />
+                </div>
+                
+                <div class="control-group">
+                    <label for="offset">Dateline offset (degrees):</label>
+                    <input type="number" id="offset" value="20" min="1" max="90" step="1" />
+                </div>
+
+                <div class="control-group">
+                    <button class="btn" onclick="clearMap()">Clear All</button>
+                    <button class="btn btn-secondary" onclick="addSampleRoute()">Add Sample Route</button>
+                    <button class="btn btn-danger" onclick="resetView()">Reset View</button>
+                </div>
+            </div>
+
+            <div class="json-container">
+                <h4>Generated GeoJSON</h4>
+                <textarea id="json-dump" placeholder="Click on the map to generate GeoJSON..."></textarea>
+                
+                <div class="stats">
+                    <div><strong>Routes created:</strong> <span id="route-count">0</span></div>
+                    <div><strong>Total points:</strong> <span id="point-count">0</span></div>
+                    <div><strong>Last route distance:</strong> <span id="last-distance">-</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        var map = L.map('map').setView(new L.LatLng(0, 0), 2)
+        // Initialize map
+        var map = L.map('map').setView(new L.LatLng(0, 0), 2);
         var idx = 1;
         var features = [];
+        var routeCount = 0;
 
+        // Map tile layer
         var url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
         var attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
         L.tileLayer(url, {
-            attribution,
+            attribution: attribution,
             maxZoom: 17,
-            noWrap:true
-
+            noWrap: true
         }).addTo(map);
 
-        // number of intermediate arc points
+        // Configuration
         var npoints = 100;
         var offset = 20;
         var coords = [];
         var points = [];
         var snap_tolerance = 500000;
 
+        // Event handlers
         map.on('click', onMapClick);
 
-        var start;
-        var end;
+        // Update controls when values change
+        document.getElementById('npoints').addEventListener('change', function() {
+            npoints = parseInt(this.value) || 100;
+        });
+
+        document.getElementById('offset').addEventListener('change', function() {
+            offset = parseInt(this.value) || 20;
+        });
+
+        var start, end;
+
         function draw(coords) {
             var len = coords.length;
-            if (len == 1) {
+            
+            if (len === 1) {
+                // First click - set start point
                 var hit = false;
                 start = coords[0];
-                for (var i=0;i<points.length;++i) {
+                
+                // Check for snapping to existing points
+                for (var i = 0; i < points.length; ++i) {
                     var distance = points[i].distanceTo(start);
-                    if (distance<snap_tolerance) {
-                        //console.log('hit previous point, re-using location')
+                    if (distance < snap_tolerance) {
                         start = points[i];
                         hit = true;
-                    } else {
-                        //console.log(distance);
+                        break;
                     }
                 }
+                
                 if (!hit) {
                     points.push(start);
                 }
-                var circleOptions = {color: '#f03', opacity: 0.5, clickable:false};
+                
+                // Add start point marker
+                var circleOptions = {
+                    color: '#28a745',
+                    opacity: 0.8,
+                    clickable: false,
+                    radius: 6
+                };
                 var circle = new L.CircleMarker(start, circleOptions);
                 map.addLayer(circle);
-
-            } else if (len == 2) {
+                
+            } else if (len === 2) {
+                // Second click - set end point and create arc
                 var hit = false;
                 end = coords[1];
-                for (var i=0;i<points.length;++i) {
+                
+                // Check for snapping to existing points
+                for (var i = 0; i < points.length; ++i) {
                     var distance = points[i].distanceTo(end);
-                    if (distance<snap_tolerance && (points[i].lng !== start.lng)) {
-                        //console.log('hit previous point, re-using location')
+                    if (distance < snap_tolerance && (points[i].lng !== start.lng)) {
                         end = points[i];
                         hit = true;
-                    } else {
-                        //console.log(distance);
+                        break;
                     }
                 }
+                
                 if (!hit) {
                     points.push(end);
                 }
-                var circleOptions = {color: '#f03', opacity: 0.5, clickable:false};
+                
+                // Add end point marker
+                var circleOptions = {
+                    color: '#dc3545',
+                    opacity: 0.8,
+                    clickable: false,
+                    radius: 6
+                };
                 var circle = new L.CircleMarker(end, circleOptions);
                 map.addLayer(circle);
 
                 try {
-                    var from = {x: start.lng, y: start.lat};
-                    var to = {x: end.lng, y:end.lat};
+                    // Create great circle
+                    var from = { x: start.lng, y: start.lat };
+                    var to = { x: end.lng, y: end.lat };
                     var properties = {
-                        arc:idx++,
-                        start:''+from.x+','+from.y,
-                        end:''+to.x+','+to.y
+                        arc: idx++,
+                        start: from.x + ',' + from.y,
+                        end: to.x + ',' + to.y,
+                        distance: calculateDistance(from, to)
                     };
-                    var greatCircle = new arc.GreatCircle(from,to,properties);
+                    
+                    var greatCircle = new arc.GreatCircle(from, to, properties);
+                    var gc = greatCircle.Arc(npoints, { offset: offset });
+                    var line = new L.geoJson().addTo(map);
+                    var geojson_feature = gc.json();
+                    
+                    features.push(geojson_feature);
+                    line.addData(geojson_feature);
+                    
+                    // Style the line
+                    line.setStyle({
+                        color: getRandomColor(),
+                        weight: 3,
+                        opacity: 0.8
+                    });
+                    
+                    // Add popup with route info
+                    var distance = calculateDistance(from, to);
+                    line.bindPopup(
+                        "<strong>Great Circle Route</strong><br>" +
+                        "From: " + from.x.toFixed(2) + ", " + from.y.toFixed(2) + "<br>" +
+                        "To: " + to.x.toFixed(2) + ", " + to.y.toFixed(2) + "<br>" +
+                        "Distance: " + distance.toFixed(0) + " km<br>" +
+                        "Points: " + npoints
+                    );
+                    
+                    // Update stats
+                    routeCount++;
+                    updateStats();
+                    
+                    // Update JSON output
+                    setTimeout(function() {
+                        map.addLayer(line);
+                        coords.length = 0;
+                        updateJsonOutput();
+                    }, 0);
+                    
                 } catch (e) {
-                    // catch possible antipodes error
-                    alert(e.message);
+                    // Handle antipodal points error
+                    alert('Error: ' + e.message);
                     coords.length = 0;
                     return;
                 }
-
-                var gc = greatCircle.Arc(npoints,{offset:offset});
-                var line = new L.geoJson().addTo(map);
-                var geojson_feature = gc.json();
-                features.push(geojson_feature)
-                // TODO  - figure out how to disable interactivity on json lines
-                line.addData(geojson_feature);
-                line.bindPopup("great circle from " + coords[0] + " to " + coords[1]);
-                setTimeout(function() {
-                    map.addLayer(line);
-                    coords.length = 0;
-                    document.getElementById("json-dump").value = JSON.stringify(
-                                                                { "type": "FeatureCollection",
-                                                                  "features": features
-                                                                });
-
-                },0)
             }
         }
 
         function onMapClick(e) {
-          var coord = new L.LatLng(e.latlng.lat, e.latlng.lng);
-          //console.log('clicked at: ' + e.latlng.lng + ' ' + e.latlng.lat)
-          coords.push(coord.wrap());
-          draw(coords);
+            var coord = new L.LatLng(e.latlng.lat, e.latlng.lng);
+            coords.push(coord.wrap());
+            draw(coords);
         }
 
-        function add(s,e) {
-            var start_ll = new L.LatLng(s[1],s[0]);
-            var end_ll = new L.LatLng(e[1],e[0]);
-            var start_coord = {x: start_ll.lng, y:start_ll.lat};
-            var end_coord = {x:end_ll.lng, y:end_ll.lat};
-            var description = ''+s[0]+','+s[1]+'=>'+e[0]+','+e[1]+'';
-            var gc0 = new arc.GreatCircle(start_coord,end_coord, {'name': 'line', 'color':'#ff7200','description':description});
-            var line0 = gc0.Arc(npoints,{offset:offset});
-            var geojson = line0.json();
-            console.log(JSON.stringify(geojson))
-            document.getElementById("json-dump").value = JSON.stringify(geojson);
-            L.geoJson(geojson, {
-                style: function (feature) {
-                  return {color: feature.properties.color};
-                },
-                onEachFeature: function (feature, layer) {
-                  layer.bindPopup(feature.properties.description);
-                }
-            }).addTo(map);
+        function calculateDistance(from, to) {
+            // Haversine formula for distance calculation
+            var R = 6371; // Earth's radius in km
+            var dLat = (to.y - from.y) * Math.PI / 180;
+            var dLon = (to.x - from.x) * Math.PI / 180;
+            var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.cos(from.y * Math.PI / 180) * Math.cos(to.y * Math.PI / 180) *
+                    Math.sin(dLon/2) * Math.sin(dLon/2);
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
         }
+
+        function getRandomColor() {
+            var colors = ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6f42c1', '#fd7e14', '#20c997', '#e83e8c'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        function updateStats() {
+            document.getElementById('route-count').textContent = routeCount;
+            document.getElementById('point-count').textContent = features.length * npoints;
+            
+            if (features.length > 0) {
+                var lastFeature = features[features.length - 1];
+                var coords = lastFeature.geometry.coordinates;
+                if (coords.length >= 2) {
+                    var start = coords[0];
+                    var end = coords[coords.length - 1];
+                    var distance = calculateDistance(
+                        { x: start[0], y: start[1] },
+                        { x: end[0], y: end[1] }
+                    );
+                    document.getElementById('last-distance').textContent = distance.toFixed(0) + ' km';
+                }
+            }
+        }
+
+        function updateJsonOutput() {
+            var output = {
+                type: "FeatureCollection",
+                features: features
+            };
+            document.getElementById("json-dump").value = JSON.stringify(output, null, 2);
+        }
+
+        function clearMap() {
+            map.eachLayer(function(layer) {
+                if (layer instanceof L.TileLayer) return;
+                map.removeLayer(layer);
+            });
+            features = [];
+            points = [];
+            coords = [];
+            routeCount = 0;
+            idx = 1;
+            updateStats();
+            updateJsonOutput();
+        }
+
+        function addSampleRoute() {
+            // Add a sample route from New York to London
+            var nyc = { x: -74.006, y: 40.7128 };
+            var london = { x: -0.1276, y: 51.5074 };
+            
+            var properties = {
+                arc: idx++,
+                start: nyc.x + ',' + nyc.y,
+                end: london.x + ',' + london.y,
+                name: 'NYC to London',
+                distance: calculateDistance(nyc, london)
+            };
+            
+            try {
+                var greatCircle = new arc.GreatCircle(nyc, london, properties);
+                var gc = greatCircle.Arc(npoints, { offset: offset });
+                var line = new L.geoJson().addTo(map);
+                var geojson_feature = gc.json();
+                
+                features.push(geojson_feature);
+                line.addData(geojson_feature);
+                line.setStyle({
+                    color: '#ff6b35',
+                    weight: 4,
+                    opacity: 0.9
+                });
+                
+                line.bindPopup(
+                    "<strong>Sample Route: NYC to London</strong><br>" +
+                    "Distance: " + properties.distance.toFixed(0) + " km<br>" +
+                    "Points: " + npoints
+                );
+                
+                routeCount++;
+                updateStats();
+                updateJsonOutput();
+                
+                // Pan to show the route
+                var group = new L.featureGroup([line]);
+                map.fitBounds(group.getBounds().pad(0.1));
+                
+            } catch (e) {
+                alert('Error creating sample route: ' + e.message);
+            }
+        }
+
+        function resetView() {
+            map.setView(new L.LatLng(0, 0), 2);
+        }
+
+        // Initialize JSON output
+        updateJsonOutput();
     </script>
 </body>
 </html>
