@@ -4,10 +4,15 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
-## [0.1.4] - 2022-11-16
 
+## [0.2.0] - 2025-09-22
+### Changed
+- TypeScript support with back compatibilty
+
+## [0.1.4] - 2022-11-16
 ### Changed
 - Limit output precision to six decimal places
+
 ## [0.1.3] - 2022-05-09
 
 ### Fixed
