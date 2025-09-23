@@ -3,7 +3,7 @@ import type { Position } from './types.js';
 /**
  * Internal LineString class for building geometries
  */
-export class LineString {
+export class _LineString {
     public coords: Position[] = [];
     public length: number = 0;
 

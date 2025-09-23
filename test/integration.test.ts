@@ -1,5 +1,4 @@
-import { GreatCircle } from '@/great-circle';
-import type { CoordinatePoint } from '@/types';
+import { GreatCircle, CoordinatePoint } from '../src';
 
 // Complex real-world routes for integration testing
 interface TestRoute {

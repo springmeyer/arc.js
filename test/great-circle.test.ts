@@ -1,5 +1,4 @@
-import { GreatCircle } from '@/great-circle';
-import { Arc } from '@/arc';
+import { Arc, GreatCircle } from '../src';
 
 // Common test coordinates
 const startPoint = { x: 0, y: 0 };

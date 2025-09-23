@@ -5,6 +5,15 @@ const coord_js_1 = require("./coord.js");
 const arc_js_1 = require("./arc.js");
 const line_string_js_1 = require("./line-string.js");
 const utils_js_1 = require("./utils.js");
+/*
+ * Portions of this file contain code ported from GDAL (Geospatial Data Abstraction Library)
+ *
+ * GDAL is licensed under the MIT/X11 license.
+ * See GDAL-LICENSE.md for the full license text.
+ *
+ * Original source: gdal/ogr/ogrgeometryfactory.cpp
+ * Repository: https://github.com/OSGeo/gdal
+ */
 /**
  * Great Circle calculation class
  * http://en.wikipedia.org/wiki/Great-circle_distance
@@ -194,7 +203,7 @@ class GreatCircle {
         }
         const arc = new arc_js_1.Arc(this.properties);
         for (let m = 0; m < poMulti.length; ++m) {
-            const line = new line_string_js_1.LineString();
+            const line = new line_string_js_1._LineString();
             arc.geometries.push(line);
             const points = poMulti[m];
             if (points) {

@@ -13,6 +13,12 @@ import type { Position } from './types.js';
  * ```
  */
 export declare function roundCoords(coords: Position): Position;
+/**
+ * Convert degrees to radians
+ */
 export declare const D2R: number;
+/**
+ * Convert radians to degrees
+ */
 export declare const R2D: number;
 //# sourceMappingURL=utils.d.ts.map

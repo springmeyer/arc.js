@@ -1,4 +1,4 @@
-import { LineString } from './line-string.js';
+import { _LineString } from './line-string.js';
 import type { GeoJSONFeature } from './types.js';
 import type { Position } from 'geojson';
 
@@ -15,7 +15,7 @@ import type { Position } from 'geojson';
  */
 export class Arc {
     public properties: Record<string, any> = {};
-    public geometries: LineString[] = [];
+    public geometries: _LineString[] = [];
 
     constructor(properties?: Record<string, any>) {
         if (properties) this.properties = properties;

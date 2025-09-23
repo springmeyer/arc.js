@@ -1,4 +1,4 @@
-import { LineString } from './line-string.js';
+import { _LineString } from './line-string.js';
 import type { GeoJSONFeature } from './types.js';
 /**
  * Arc class representing the result of great circle calculations
@@ -13,7 +13,7 @@ import type { GeoJSONFeature } from './types.js';
  */
 export declare class Arc {
     properties: Record<string, any>;
-    geometries: LineString[];
+    geometries: _LineString[];
     constructor(properties?: Record<string, any>);
     /**
      * Convert to GeoJSON Feature
