@@ -19,36 +19,85 @@
             font-size: 14px;
             line-height: 1.5;
             color: #333;
-            background-color: #f8f9fa;
+            background-color: #fafafa;
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: #fafafa;
+            color: #1a1a1a;
+            padding: 0.75rem 2rem;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .header h1 {
             margin: 0;
-            font-size: 2rem;
-            font-weight: 300;
+            font-size: 1.3rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
         }
 
         .header p {
-            margin: 0.5rem 0 0 0;
-            opacity: 0.9;
-            font-size: 1.1rem;
+            margin: 0;
+            color: #666;
+            font-size: 0.85rem;
+            font-weight: 400;
+        }
+
+        .header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .header-subtitle {
+            font-size: 0.75rem;
+            color: #9ca3af;
+            font-weight: 400;
+            margin-top: 0.15rem;
+        }
+
+        .header-subtitle a {
+            color: #6b7280;
+            text-decoration: none;
+        }
+
+        .header-subtitle a:hover {
+            text-decoration: underline;
+        }
+
+        .github-link {
+            color: #1a1a1a;
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem;
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .github-link:hover {
+            background: #f0f0f0;
+            border-color: #a0a0a0;
         }
 
         .container {
             display: flex;
             height: calc(100vh - 80px);
+            gap: 1rem;
+            padding: 1rem;
+            background: #fafafa;
         }
 
         .map-container {
             flex: 2;
             position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
         }
 
         #map {
@@ -59,149 +108,192 @@
         .sidebar {
             flex: 1;
             background: white;
-            border-left: 1px solid #e9ecef;
             display: flex;
             flex-direction: column;
             max-width: 400px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            overflow-y: auto;
         }
 
         .sidebar-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid #e9ecef;
-            background: #f8f9fa;
+            padding: 0.85rem 1.5rem;
+            background: white;
         }
 
         .sidebar-header h3 {
-            margin: 0 0 0.5rem 0;
-            color: #495057;
-            font-size: 1.2rem;
+            margin: 0;
+            color: #1a1a1a;
+            font-size: 0.95rem;
+            font-weight: 600;
         }
 
         .sidebar-header p {
             margin: 0;
-            color: #6c757d;
-            font-size: 0.9rem;
+            color: #757575;
+            font-size: 0.85rem;
+            font-weight: 400;
         }
 
         .controls {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #e9ecef;
+            padding: 0.75rem 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
         }
 
         .control-group {
-            margin-bottom: 1rem;
+            margin-bottom: 0;
+        }
+        
+        .control-group:last-child {
+            grid-column: 1 / -1;
         }
 
         .control-group label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
             font-weight: 500;
-            color: #495057;
+            color: #1a1a1a;
+            font-size: 0.8rem;
         }
 
         .control-group input {
             width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #ced4da;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #d0d0d0;
             border-radius: 4px;
             font-size: 0.9rem;
+            background: #fafafa;
+        }
+
+        .control-group input:focus {
+            outline: none;
+            border-color: #2563eb;
+            background: white;
+        }
+
+        .control-group:last-child {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .control-group:last-child .btn {
+            flex: 1;
+            margin: 0;
         }
 
         .btn {
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
+            background: #e5e7eb;
+            color: #374151;
+            border: 1px solid #d1d5db;
+            padding: 0.35rem 0.75rem;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 0.9rem;
-            margin-right: 0.5rem;
-            margin-bottom: 0.5rem;
+            font-size: 0.75rem;
+            margin-right: 0.35rem;
+            margin-bottom: 0.35rem;
+            font-weight: 500;
+            transition: all 0.2s;
         }
 
         .btn:hover {
-            background: #0056b3;
+            background: #d1d5db;
+            border-color: #9ca3af;
         }
 
         .btn-secondary {
-            background: #6c757d;
+            background: #e5e7eb;
+            color: #374151;
+            border: 1px solid #d1d5db;
         }
 
         .btn-secondary:hover {
-            background: #545b62;
+            background: #d1d5db;
+            border-color: #9ca3af;
         }
 
         .btn-danger {
-            background: #dc3545;
+            background: #fee2e2;
+            color: #7f1d1d;
+            border: 1px solid #fca5a5;
         }
 
         .btn-danger:hover {
-            background: #c82333;
+            background: #fecaca;
+            border-color: #f87171;
         }
 
         .json-container {
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 1.5rem;
+            padding: 0.85rem 1.5rem;
+            margin-top: auto;
+            border-top: 1px solid #f0f0f0;
         }
 
         .json-container h4 {
-            margin: 0 0 1rem 0;
-            color: #495057;
-            font-size: 1rem;
+            margin: 0 0 0.5rem 0;
+            color: #1a1a1a;
+            font-size: 0.9rem;
+            font-weight: 600;
         }
 
         #json-dump {
             flex: 1;
             font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            font-size: 12px;
-            line-height: 1.4;
-            padding: 1rem;
-            border: 1px solid #ced4da;
+            font-size: 11px;
+            line-height: 1.3;
+            padding: 0.5rem;
+            border: 1px solid #d0d0d0;
             border-radius: 4px;
-            background: #f8f9fa;
+            background: #fafafa;
             resize: vertical;
-            min-height: 200px;
+            min-height: 120px;
+            color: #1a1a1a;
         }
 
         .stats {
-            margin-top: 1rem;
-            padding: 1rem;
-            background: #e9ecef;
+            margin-bottom: 0.75rem;
+            padding: 0.5rem;
+            background: #f0f0f0;
             border-radius: 4px;
-            font-size: 0.9rem;
+            font-size: 0.75rem;
         }
 
         .stats div {
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.2rem;
         }
 
         .stats strong {
-            color: #495057;
+            color: #1a1a1a;
         }
 
         .instructions {
-            background: #d1ecf1;
-            border: 1px solid #bee5eb;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
             border-radius: 4px;
-            padding: 1rem;
+            padding: 0.85rem;
             margin-bottom: 1rem;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .instructions h4 {
-            margin: 0 0 0.5rem 0;
-            color: #0c5460;
+            margin: 0 0 0.4rem 0;
+            color: #1e40af;
+            font-weight: 600;
+            font-size: 0.9rem;
         }
 
         .instructions ul {
             margin: 0;
             padding-left: 1.2rem;
+            color: #1e3a8a;
         }
 
         .instructions li {
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.2rem;
         }
 
         @media (max-width: 768px) {
@@ -218,8 +310,12 @@
 </head>
 <body>
     <div class="header">
-        <h1>arc.js</h1>
-        <p>Calculate great circle routes as GeoJSON - Click on the map to create arcs!</p>
+        <div class="header-left">
+            <h1>arc.js</h1>
+            <p>Great circle routes as GeoJSON</p>
+            <div class="header-subtitle">Also available via <a href="https://turfjs.org/docs/api/greatCircle" target="_blank">Turf.js</a></div>
+        </div>
+        <a href="https://github.com/springmeyer/arc.js" class="github-link">View on GitHub</a>
     </div>
 
     <div class="container">
@@ -229,18 +325,7 @@
         
         <div class="sidebar">
             <div class="sidebar-header">
-                <h3>Interactive Demo</h3>
-                <p>Click two points on the map to create a great circle route</p>
-            </div>
-
-            <div class="instructions">
-                <h4>How to use:</h4>
-                <ul>
-                    <li>Click anywhere on the map to set the start point</li>
-                    <li>Click again to set the end point and create an arc</li>
-                    <li>Repeat to create multiple routes</li>
-                    <li>Use the controls below to adjust settings</li>
-                </ul>
+                <h3>Settings</h3>
             </div>
 
             <div class="controls">
@@ -256,20 +341,19 @@
 
                 <div class="control-group">
                     <button class="btn" onclick="clearMap()">Clear All</button>
-                    <button class="btn btn-secondary" onclick="addSampleRoute()">Add Sample Route</button>
                     <button class="btn btn-danger" onclick="resetView()">Reset View</button>
                 </div>
             </div>
 
             <div class="json-container">
-                <h4>Generated GeoJSON</h4>
-                <textarea id="json-dump" placeholder="Click on the map to generate GeoJSON..."></textarea>
-                
                 <div class="stats">
                     <div><strong>Routes created:</strong> <span id="route-count">0</span></div>
                     <div><strong>Total points:</strong> <span id="point-count">0</span></div>
                     <div><strong>Last route distance:</strong> <span id="last-distance">-</span></div>
                 </div>
+                
+                <h4>Generated GeoJSON</h4>
+                <textarea id="json-dump" placeholder="Click on the map to generate GeoJSON..."></textarea>
             </div>
         </div>
     </div>

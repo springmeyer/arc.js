@@ -159,6 +159,10 @@ The library automatically handles routes that cross the international dateline. 
 
 See the [interactive demo](https://danespringmeyer.com/arc.js/) for sample code showing how to create GeoJSON feature collections from multiple routes.
 
+## Used in Turf.js
+
+arc.js powers the [`greatCircle`](https://turfjs.org/docs/api/greatCircle) function in [Turf.js](https://turfjs.org/), a popular geospatial JavaScript library. You can use great circle calculations directly through Turf:
+
 ## License
 
 This project is licensed under the BSD license. See [LICENSE.md](LICENSE.md) for details.
