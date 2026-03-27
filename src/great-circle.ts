@@ -148,10 +148,10 @@ export class GreatCircle {
             for (let k = 0; k < first_pass.length; ++k) {
                 const dfX0 = parseFloat((first_pass[k]?.[0] ?? 0).toString());
                 if (k > 0 && Math.abs(dfX0 - (first_pass[k-1]?.[0] ?? 0)) > dfDiffSpace) {
-                    const dfX1 = parseFloat((first_pass[k-1]?.[0] ?? 0).toString());
-                    const dfY1 = parseFloat((first_pass[k-1]?.[1] ?? 0).toString());
-                    const dfX2 = parseFloat((first_pass[k]?.[0] ?? 0).toString());
-                    const dfY2 = parseFloat((first_pass[k]?.[1] ?? 0).toString());
+                    let dfX1 = parseFloat((first_pass[k-1]?.[0] ?? 0).toString());
+                    let dfY1 = parseFloat((first_pass[k-1]?.[1] ?? 0).toString());
+                    let dfX2 = parseFloat((first_pass[k]?.[0] ?? 0).toString());
+                    let dfY2 = parseFloat((first_pass[k]?.[1] ?? 0).toString());
                     if (dfX1 > -180 && dfX1 < dfRightBorderX && dfX2 === 180 &&
                         k+1 < first_pass.length &&
                        (first_pass[k-1]?.[0] ?? 0) > -180 && (first_pass[k-1]?.[0] ?? 0) < dfRightBorderX)
@@ -174,15 +174,15 @@ export class GreatCircle {
                     {
                         // swap dfX1, dfX2
                         const tmpX = dfX1;
-                        const dfX1_new = dfX2;
-                        const dfX2_new = tmpX;
+                        dfX1 = dfX2;
+                        dfX2 = tmpX;
                         // swap dfY1, dfY2
                         const tmpY = dfY1;
-                        const dfY1_new = dfY2;
-                        const dfY2_new = tmpY;
+                        dfY1 = dfY2;
+                        dfY2 = tmpY;
                     }
                     if (dfX1 > dfLeftBorderX && dfX2 < dfRightBorderX) {
-                        const dfX2_adjusted = dfX2 + 360;
+                        dfX2 += 360;
                     }
 
                     if (dfX1 <= 180 && dfX2 >= 180 && dfX1 < dfX2)

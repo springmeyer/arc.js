@@ -177,6 +177,82 @@ describe('GreatCircle', () => {
       
       expect(arc.geometries.length).toBeGreaterThan(0);
     });
+
+    test('should split Tokyo-LAX route at antimeridian with shared crossing point', () => {
+      const tokyo = { x: 139.7798, y: 35.5494 };
+      const lax = { x: -118.4085, y: 33.9416 };
+      
+      const gc = new GreatCircle(tokyo, lax);
+      const json = gc.Arc(100, { offset: 10 }).json();
+      
+      expect(json.geometry.type).toBe('MultiLineString');
+      const coords = (json.geometry as any).coordinates;
+      expect(coords.length).toBe(2);
+      
+      // Last point of first segment should be on +180
+      const lastOfFirst = coords[0][coords[0].length - 1];
+      expect(lastOfFirst[0]).toBe(180);
+      
+      // First point of second segment should be on -180
+      const firstOfSecond = coords[1][0];
+      expect(firstOfSecond[0]).toBe(-180);
+      
+      // Both crossing points share the same interpolated latitude
+      expect(lastOfFirst[1]).toBe(firstOfSecond[1]);
+    });
+
+    test('should split Auckland-LA route at antimeridian with shared crossing point', () => {
+      const auckland = { x: 174.79, y: -36.85 };
+      const la = { x: -118.41, y: 33.94 };
+      
+      const gc = new GreatCircle(auckland, la);
+      const json = gc.Arc(100, { offset: 10 }).json();
+      
+      expect(json.geometry.type).toBe('MultiLineString');
+      const coords = (json.geometry as any).coordinates;
+      expect(coords.length).toBe(2);
+      
+      const lastOfFirst = coords[0][coords[0].length - 1];
+      const firstOfSecond = coords[1][0];
+      expect(lastOfFirst[0]).toBe(180);
+      expect(firstOfSecond[0]).toBe(-180);
+      expect(lastOfFirst[1]).toBe(firstOfSecond[1]);
+    });
+
+    test('should split Shanghai-SFO route at antimeridian with shared crossing point', () => {
+      const shanghai = { x: 121.81, y: 31.14 };
+      const sfo = { x: -122.38, y: 37.62 };
+      
+      const gc = new GreatCircle(shanghai, sfo);
+      const json = gc.Arc(100, { offset: 10 }).json();
+      
+      expect(json.geometry.type).toBe('MultiLineString');
+      const coords = (json.geometry as any).coordinates;
+      expect(coords.length).toBe(2);
+      
+      const lastOfFirst = coords[0][coords[0].length - 1];
+      const firstOfSecond = coords[1][0];
+      expect(lastOfFirst[0]).toBe(180);
+      expect(firstOfSecond[0]).toBe(-180);
+      expect(lastOfFirst[1]).toBe(firstOfSecond[1]);
+    });
+
+    test('should not have large longitude jumps within any segment', () => {
+      const tokyo = { x: 139.7798, y: 35.5494 };
+      const lax = { x: -118.4085, y: 33.9416 };
+      
+      const gc = new GreatCircle(tokyo, lax);
+      const json = gc.Arc(100, { offset: 10 }).json();
+      const coords = (json.geometry as any).coordinates;
+      
+      for (const segment of coords) {
+        for (let i = 1; i < segment.length; i++) {
+          const lonDiff = Math.abs(segment[i][0] - segment[i - 1][0]);
+          // No segment should have an internal jump > 180 degrees
+          expect(lonDiff).toBeLessThan(180);
+        }
+      }
+    });
   });
 
   describe('Error handling', () => {
