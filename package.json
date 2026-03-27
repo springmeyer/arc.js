@@ -36,7 +36,7 @@
     "CHANGELOG.md"
   ],
   "engines": {
-    "node": ">=0.4.0"
+    "node": ">=16.11.0"
   },
   "scripts": {
     "build": "npm run clean && tsc && tsc -p tsconfig.esm.json && npm run build:browser",
