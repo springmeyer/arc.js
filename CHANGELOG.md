@@ -5,9 +5,36 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [1.0.0] - 2026-03-29
+
+### Breaking change
+
+- arc.js is now a [pure](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c) ESM package. 
+
+If you need to `require()` arc.js as CJS (CommonJS), or have a runtime older than Node.js 18, please use `0.1.4`.
+
+0.x syntax:
+```js
+const arc = require('arc');
+const gc = new arc.GreatCircle(/* */);
+```
+
+1.x syntax:
+```js
+import { GreatCircle } from 'arc';
+const gc = new GreatCircle(/* */);
+```
+
+### Fixed
+
+- antimeridian splitting in GreatCircle.Arc (From @copilot)
+
 ## [0.2.0] - 2025-09-22
+### Breaking
+- Node.js 16 is now the minimum supported runtime
+
 ### Changed
-- TypeScript support with back compatibilty (From @thomas-hervey)
+- TypeScript support with backwards compatibility (From @thomas-hervey)
 
 ## [0.1.4] - 2022-11-16
 ### Changed
@@ -39,7 +66,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Fixed jshint strict errors
 
-[unreleased]: https://github.com/springmeyer/arc.js/compare/v0.1.4..HEAD
+[unreleased]: https://github.com/springmeyer/arc.js/compare/v1.0.0..HEAD
+[1.0.0]: https://github.com/springmeyer/arc.js/compare/v0.2.0...v1.0.0
+[0.2.0]: https://github.com/springmeyer/arc.js/compare/v0.1.4...v0.2.0
 [0.1.4]: https://github.com/springmeyer/arc.js/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/springmeyer/arc.js/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/springmeyer/arc.js/compare/v0.1.1...v0.1.2
