@@ -1,1 +1,0 @@
-{"version":3,"file":"line-string.js","sourceRoot":"","sources":["../../src/line-string.ts"],"names":[],"mappings":"AAEA;;GAEG;AACH,MAAM,OAAO,WAAW;IACb,MAAM,GAAe,EAAE,CAAC;IACxB,MAAM,GAAW,CAAC,CAAC;IAE1B;;;;OAIG;IACH,OAAO,CAAC,KAAe;QACnB,IAAI,CAAC,MAAM,EAAE,CAAC;QACd,IAAI,CAAC,MAAM,CAAC,IAAI,CAAC,KAAK,CAAC,CAAC;IAC5B,CAAC;CACJ"}
