@@ -6,7 +6,7 @@ Calculate great circle routes as lines in GeoJSON or WKT format.
 
 **Features:**
 - Full TypeScript support with type definitions
-- Works in Node.js (CommonJS & ES modules) and browsers
+- Works in Node.js and browsers
 - Generates GeoJSON and WKT output formats
 - Handles dateline crossing automatically
 - Based on [Ed Williams' Aviation Formulary](https://edwilliams.org/avform.htm#Intermediate) algorithms and the GDAL source code
@@ -19,15 +19,6 @@ npm install arc
 
 ## Quick Start
 
-### CommonJS (Node.js)
-```js
-const arc = require('arc');
-const gc = new arc.GreatCircle({x: -122, y: 48}, {x: -77, y: 39});
-const line = gc.Arc(100);
-console.log(line.json()); // GeoJSON output
-```
-
-### ES Modules (Node.js, bundlers)
 ```js
 import { GreatCircle } from 'arc';
 const gc = new GreatCircle({x: -122, y: 48}, {x: -77, y: 39});
@@ -45,10 +36,10 @@ const gc = new GreatCircle(start, end);
 const line = gc.Arc(100);
 ```
 
-### Browser (Global)
+### Browser (ESM)
 ```html
-<script src="./arc.js"></script>
-<script>
+<script type="module">
+  import { GreatCircle } from 'https://cdn.skypack.dev/arc@1';
   const gc = new arc.GreatCircle({x: -122, y: 48}, {x: -77, y: 39});
   const line = gc.Arc(100);
 </script>
@@ -165,7 +156,7 @@ arc.js powers the [`greatCircle`](https://turfjs.org/docs/api/greatCircle) funct
 
 ## License
 
-This project is licensed under the BSD license. See [LICENSE.md](LICENSE.md) for details.
+This project is licensed under the BSD license. See [LICENSE.md](LICENSE) for details.
 
 ### Third-Party Licenses
 

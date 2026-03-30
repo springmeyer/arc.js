@@ -13,47 +13,41 @@
     "typescript"
   ],
   "contributors": [
-    "Dane Springmeyer <dane.springmeyer@gmail.com>"
+    "Dane Springmeyer <dane.springmeyer@gmail.com>",
+    "John Gravois <jagravois@gmail.com>"
   ],
   "repository": {
     "type": "git",
     "url": "git://github.com/springmeyer/arc.js.git"
   },
-  "licenses": [
-    {
-      "type": "BSD"
-    }
-  ],
-  "main": "./dist/index.js",
-  "module": "./dist/esm/index.js",
-  "types": "./dist/index.d.ts",
+  "license": "BSD",
+  "type": "module",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "default": "./dist/index.js"
+  },
   "files": [
     "dist/",
-    "arc.js",
     "README.md",
     "LICENSE.md",
     "GDAL-LICENSE.md",
     "CHANGELOG.md"
   ],
   "engines": {
-    "node": ">=16.11.0"
+    "node": ">=18"
   },
   "scripts": {
-    "build": "npm run clean && tsc && tsc -p tsconfig.esm.json && npm run build:browser",
-    "build:browser": "esbuild src/index.ts --bundle --format=iife --global-name=arc --outfile=arc.js --platform=browser",
-    "clean": "rm -rf dist/ && rm -f arc.js",
+    "build": "npm run clean && tsc",
+    "clean": "rm -rf dist/",
     "test": "jest",
-    "test:all": "npm run test && npm run test:build",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "test:build": "node test/build-output.test.js",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "@types/geojson": "^7946.0.16",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.0.0",
-    "esbuild": "^0.25.9",
     "expect-type": "^1.2.2",
     "jest": "^29.7.0",
     "ts-jest": "^29.4.3",

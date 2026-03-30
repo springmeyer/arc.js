@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   // Use ts-jest preset for TypeScript support
   preset: 'ts-jest',
   

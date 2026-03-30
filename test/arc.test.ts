@@ -1,4 +1,5 @@
-import { Arc, _LineString } from '../src';
+import { Arc } from '../src';
+import { _LineString } from '../src/line-string';
 
 const emptyArcGeoJSON = {
   type: 'Feature',

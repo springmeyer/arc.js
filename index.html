@@ -6,7 +6,6 @@
     <title>arc.js - Great Circle Routes Demo</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <script src="./arc.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -340,8 +339,8 @@
                 </div>
 
                 <div class="control-group">
-                    <button class="btn" onclick="clearMap()">Clear All</button>
-                    <button class="btn btn-danger" onclick="resetView()">Reset View</button>
+                    <button id="clear" class="btn">Clear All</button>
+                    <button id="reset" class="btn btn-danger">Reset View</button>
                 </div>
             </div>
 
@@ -357,8 +356,9 @@
             </div>
         </div>
     </div>
-
-    <script>
+    <script type="module">
+        import { GreatCircle } from 'https://cdn.skypack.dev/arc@1';
+        
         // Initialize map
         var map = L.map('map').setView(new L.LatLng(0, 0), 2);
         var idx = 1;
@@ -468,7 +468,7 @@
                         distance: calculateDistance(from, to)
                     };
                     
-                    var greatCircle = new arc.GreatCircle(from, to, properties);
+                    var greatCircle = new GreatCircle(from, to, properties);
                     var gc = greatCircle.Arc(npoints, { offset: offset });
                     var line = new L.geoJson().addTo(map);
                     var geojson_feature = gc.json();
@@ -591,7 +591,7 @@
             };
             
             try {
-                var greatCircle = new arc.GreatCircle(nyc, london, properties);
+                var greatCircle = new GreatCircle(nyc, london, properties);
                 var gc = greatCircle.Arc(npoints, { offset: offset });
                 var line = new L.geoJson().addTo(map);
                 var geojson_feature = gc.json();
@@ -629,6 +629,9 @@
 
         // Initialize JSON output
         updateJsonOutput();
+
+        document.querySelector('#clear').addEventListener('click', clearMap);
+        document.querySelector('#reset').addEventListener('click', resetView);
     </script>
 </body>
 </html>
