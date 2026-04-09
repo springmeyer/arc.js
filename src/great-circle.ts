@@ -98,133 +98,84 @@ export class GreatCircle {
      * console.log(greatCircle.Arc(10)); // Arc { geometries: [ [Array] ] }
      * ```
      */
-    Arc(npoints?: number, options?: ArcOptions): Arc {
-        let first_pass: [number, number][] = [];
-        
+    Arc(npoints?: number, _options?: ArcOptions): Arc {
+        // NOTE: With npoints ≤ 2, no antimeridian splitting is performed.
+        // A 2-point antimeridian route returns a single LineString spanning ±180°.
+        // Renderers that support coordinate wrapping (e.g. MapLibre GL JS) handle this
+        // correctly, whereas splitting would produce two disconnected straight-line stubs
+        // with no great-circle curvature — arguably worse behavior. This is a known
+        // limitation; open for maintainer discussion if a MultiLineString split is preferred.
         if (!npoints || npoints <= 2) {
-            first_pass.push([this.start.lon, this.start.lat]);
-            first_pass.push([this.end.lon, this.end.lat]);
-        } else {
-            const delta = 1.0 / (npoints - 1);
-            for (let i = 0; i < npoints; ++i) {
-                const step = delta * i;
-                const pair = this.interpolate(step);
-                first_pass.push(pair);
-            }
+            const arc = new Arc(this.properties);
+            const line = new _LineString();
+            arc.geometries.push(line);
+            line.move_to(roundCoords([this.start.lon, this.start.lat]));
+            line.move_to(roundCoords([this.end.lon, this.end.lat]));
+            return arc;
         }
 
-        /* partial port of dateline handling from:
-          gdal/ogr/ogrgeometryfactory.cpp
+        // NOTE: options.offset was previously used as dfDateLineOffset in the GDAL-ported
+        // heuristic. It is kept in ArcOptions for backwards compatibility but is a no-op here.
 
-          TODO - does not handle all wrapping scenarios yet
-        */
-        let bHasBigDiff = false;
-        let dfMaxSmallDiffLong = 0;
-        // from http://www.gdal.org/ogr2ogr.html
-        // -datelineoffset:
-        // (starting with GDAL 1.10) offset from dateline in degrees (default long. = +/- 10deg, geometries within 170deg to -170deg will be splited)
-        const dfDateLineOffset = options?.offset ?? 10;
-        const dfLeftBorderX = 180 - dfDateLineOffset;
-        const dfRightBorderX = -180 + dfDateLineOffset;
-        const dfDiffSpace = 360 - dfDateLineOffset;
-
-        // https://github.com/OSGeo/gdal/blob/7bfb9c452a59aac958bff0c8386b891edf8154ca/gdal/ogr/ogrgeometryfactory.cpp#L2342
-        for (let j = 1; j < first_pass.length; ++j) {
-            const dfPrevX = first_pass[j-1]?.[0] ?? 0;
-            const dfX = first_pass[j]?.[0] ?? 0;
-            const dfDiffLong = Math.abs(dfX - dfPrevX);
-            if (dfDiffLong > dfDiffSpace &&
-                ((dfX > dfLeftBorderX && dfPrevX < dfRightBorderX) || (dfPrevX > dfLeftBorderX && dfX < dfRightBorderX))) {
-                bHasBigDiff = true;
-            } else if (dfDiffLong > dfMaxSmallDiffLong) {
-                dfMaxSmallDiffLong = dfDiffLong;
-            }
+        const delta = 1.0 / (npoints - 1);
+        const first_pass: [number, number][] = [];
+        for (let i = 0; i < npoints; ++i) {
+            first_pass.push(this.interpolate(delta * i));
         }
 
-        const poMulti: [number, number][][] = [];
-        if (bHasBigDiff && dfMaxSmallDiffLong < dfDateLineOffset) {
-            let poNewLS: [number, number][] = [];
-            poMulti.push(poNewLS);
-            for (let k = 0; k < first_pass.length; ++k) {
-                const dfX0 = parseFloat((first_pass[k]?.[0] ?? 0).toString());
-                if (k > 0 && Math.abs(dfX0 - (first_pass[k-1]?.[0] ?? 0)) > dfDiffSpace) {
-                    let dfX1 = parseFloat((first_pass[k-1]?.[0] ?? 0).toString());
-                    let dfY1 = parseFloat((first_pass[k-1]?.[1] ?? 0).toString());
-                    let dfX2 = parseFloat((first_pass[k]?.[0] ?? 0).toString());
-                    let dfY2 = parseFloat((first_pass[k]?.[1] ?? 0).toString());
-                    if (dfX1 > -180 && dfX1 < dfRightBorderX && dfX2 === 180 &&
-                        k+1 < first_pass.length &&
-                       (first_pass[k-1]?.[0] ?? 0) > -180 && (first_pass[k-1]?.[0] ?? 0) < dfRightBorderX)
-                    {
-                         poNewLS.push([-180, first_pass[k]?.[1] ?? 0]);
-                         k++;
-                         poNewLS.push([first_pass[k]?.[0] ?? 0, first_pass[k]?.[1] ?? 0]);
-                         continue;
-                    } else if (dfX1 > dfLeftBorderX && dfX1 < 180 && dfX2 === -180 &&
-                         k+1 < first_pass.length &&
-                         (first_pass[k-1]?.[0] ?? 0) > dfLeftBorderX && (first_pass[k-1]?.[0] ?? 0) < 180)
-                    {
-                         poNewLS.push([180, first_pass[k]?.[1] ?? 0]);
-                         k++;
-                         poNewLS.push([first_pass[k]?.[0] ?? 0, first_pass[k]?.[1] ?? 0]);
-                         continue;
-                    }
+        // Analytical antimeridian splitting via bisection.
+        // For each consecutive pair of points where |Δlon| > 180 (opposite sides of ±180°),
+        // binary-search for the exact crossing fraction f* using interpolate(), then insert
+        // [±180, lat*] boundary points and start a new segment. 50 iterations → sub-nanodegree precision.
+        const segments: [number, number][][] = [];
+        let current: [number, number][] = [];
 
-                    if (dfX1 < dfRightBorderX && dfX2 > dfLeftBorderX)
-                    {
-                        // swap dfX1, dfX2
-                        const tmpX = dfX1;
-                        dfX1 = dfX2;
-                        dfX2 = tmpX;
-                        // swap dfY1, dfY2
-                        const tmpY = dfY1;
-                        dfY1 = dfY2;
-                        dfY2 = tmpY;
-                    }
-                    if (dfX1 > dfLeftBorderX && dfX2 < dfRightBorderX) {
-                        dfX2 += 360;
-                    }
+        for (let i = 0; i < first_pass.length; i++) {
+            const pt = first_pass[i]!;
 
-                    if (dfX1 <= 180 && dfX2 >= 180 && dfX1 < dfX2)
-                    {
-                        const dfRatio = (180 - dfX1) / (dfX2 - dfX1);
-                        const dfY = dfRatio * dfY2 + (1 - dfRatio) * dfY1;
-                        poNewLS.push([(first_pass[k-1]?.[0] ?? 0) > dfLeftBorderX ? 180 : -180, dfY]);
-                        poNewLS = [];
-                        poNewLS.push([(first_pass[k-1]?.[0] ?? 0) > dfLeftBorderX ? -180 : 180, dfY]);
-                        poMulti.push(poNewLS);
+            if (i === 0) {
+                current.push(pt);
+                continue;
+            }
+
+            const prev = first_pass[i - 1]!;
+
+            if (Math.abs(pt[0] - prev[0]) > 180) {
+                let lo = delta * (i - 1);
+                let hi = delta * i;
+
+                for (let iter = 0; iter < 50; iter++) {
+                    const mid = (lo + hi) / 2;
+                    const [midLon] = this.interpolate(mid);
+                    const [loLon] = this.interpolate(lo);
+                    if (Math.abs(midLon - loLon) < 180) {
+                        lo = mid;
+                    } else {
+                        hi = mid;
                     }
-                    else
-                    {
-                        poNewLS = [];
-                        poMulti.push(poNewLS);
-                    }
-                    poNewLS.push([dfX0, first_pass[k]?.[1] ?? 0]);
-                } else {
-                    poNewLS.push([first_pass[k]?.[0] ?? 0, first_pass[k]?.[1] ?? 0]);
                 }
+
+                const [, crossingLat] = this.interpolate((lo + hi) / 2);
+                const fromEast = prev[0] > 0;
+
+                current.push([fromEast ? 180 : -180, crossingLat]);
+                segments.push(current);
+                current = [[fromEast ? -180 : 180, crossingLat]];
             }
-        } else {
-            // add normally
-            const poNewLS0: [number, number][] = [];
-            poMulti.push(poNewLS0);
-            for (let l = 0; l < first_pass.length; ++l) {
-                poNewLS0.push([first_pass[l]?.[0] ?? 0, first_pass[l]?.[1] ?? 0]);
-            }
+
+            current.push(pt);
+        }
+
+        if (current.length > 0) {
+            segments.push(current);
         }
 
         const arc = new Arc(this.properties);
-        for (let m = 0; m < poMulti.length; ++m) {
+        for (const seg of segments) {
             const line = new _LineString();
             arc.geometries.push(line);
-            const points = poMulti[m];
-            if (points) {
-                for (let j0 = 0; j0 < points.length; ++j0) {
-                    const point = points[j0];
-                    if (point) {
-                        line.move_to(roundCoords([point[0], point[1]]));
-                    }
-                }
+            for (const pt of seg) {
+                line.move_to(roundCoords([pt[0], pt[1]]));
             }
         }
         return arc;
