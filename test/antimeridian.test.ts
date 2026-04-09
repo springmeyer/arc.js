@@ -27,6 +27,9 @@ const HIGH_LATITUDE = [
 ];
 
 function assertSplitAtAntimeridian(coords: number[][][], fromEast: boolean) {
+    // Exactly 2 segments — guards against false positives from 3+ segment splits
+    expect(coords.length).toBe(2);
+
     const seg0 = coords[0];
     const seg1 = coords[1];
 
