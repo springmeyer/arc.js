@@ -6,9 +6,8 @@ This guide covers working with the TypeScript codebase for arc.js.
 
 ```bash
 npm install          # Install dependencies
-npm run build        # Build all outputs
+npm run build        # Build ESM output
 npm test             # Run TypeScript tests
-npm run test:all     # Run all tests (TypeScript + build validation)
 ```
 
 ## Project Structure
@@ -24,8 +23,7 @@ src/
 └── types.ts         # TypeScript type definitions
 
 test/
-├── *.test.ts        # Jest TypeScript tests (source code)
-└── build-output.test.js  # Build validation (compiled output)
+└── *.test.ts        # Jest TypeScript tests
 ```
 
 ## Development Workflow
@@ -36,14 +34,11 @@ test/
 # Run TypeScript tests (fast, for development)
 npm test
 
-# Run build validation (slower, tests compiled output)
-npm run test:build
-
-# Run everything (recommended before committing)
-npm run test:all
-
 # Watch mode for development
 npm run test:watch
+
+# Coverage report
+npm run test:coverage
 ```
 
 ### Building
@@ -52,10 +47,7 @@ npm run test:watch
 npm run build
 ```
 
-This generates:
-- `dist/` - CommonJS output with `.d.ts` files
-- `dist/esm/` - ES modules output  
-- `arc.js` - Browser bundle (UMD format)
+This generates `dist/` — ESM output with `.d.ts` declaration files.
 
 ## Publishing
 
@@ -68,7 +60,7 @@ This generates:
 
 ### Pre-publish Checklist (for maintainers)
 
-1. **Tests pass**: `npm run test:all`
+1. **Tests pass**: `npm test`
 2. **Build succeeds**: `npm run build`
 3. **Version updated**: Update `package.json` version
 4. **Changelog updated**: Document changes
@@ -77,16 +69,12 @@ This generates:
 ### Publishing Process (maintainers only)
 
 ```bash
-npm run build        # Builds automatically on prepublishOnly
-npm publish
+npm publish   # prepublishOnly runs npm run build automatically
 ```
-
-The `prepublishOnly` script ensures a fresh build before publishing.
 
 ### What Gets Published
 
-- `dist/` folder (compiled JS + TypeScript definitions)
-- `arc.js` browser bundle
+- `dist/` folder (compiled ESM JS + TypeScript definitions)
 - `README.md`, `LICENSE.md`, `CHANGELOG.md`
 
 ## TypeScript Development
@@ -94,32 +82,22 @@ The `prepublishOnly` script ensures a fresh build before publishing.
 ### TypeScript Configuration
 
 - **Source**: Modern TypeScript with strict settings
-- **Output**: ES2022 for broad compatibility
-- **Paths**: `@/` alias maps to `src/` in tests
+- **Output**: ES2022, ESM only
 - **Declarations**: Full `.d.ts` generation for consumers
+
 ### Adding New Types
 
-1. Add interfaces/types to `src/types.ts`. You can see that it makes use of some GeoJSON types, but in the future it may want to use more of them.
+1. Add interfaces/types to `src/types.ts`
 2. Export public types from `src/index.ts`
 3. Import types with `import type { ... }`
-4. Add tests in relevant `test/*.test.ts` files including typescript.test.ts
+4. Add tests in relevant `test/*.test.ts` files including `typescript.test.ts`
 
-## Usage & Module Formats
-
-The package supports multiple import styles:
+## Usage
 
 ```javascript
-// CommonJS (Node.js)
-const { GreatCircle } = require('arc');
-
-// ES Modules  
+// ES Modules (Node.js or bundler)
 import { GreatCircle } from 'arc';
-
-// Browser (UMD bundle)
-<script src="arc.js"></script>
 ```
-
-All formats are tested in `test/build-output.test.js`.
 
 ## Common Tasks
 
