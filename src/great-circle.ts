@@ -4,15 +4,6 @@ import { Arc } from './arc.js';
 import { _LineString } from './line-string.js';
 import { roundCoords, R2D } from './utils.js';
 
-/*
- * Portions of this file contain code ported from GDAL (Geospatial Data Abstraction Library)
- * 
- * GDAL is licensed under the MIT/X11 license.
- * See GDAL-LICENSE.md for the full license text.
- * 
- * Original source: gdal/ogr/ogrgeometryfactory.cpp
- * Repository: https://github.com/OSGeo/gdal
- */
 
 /**
  * Great Circle calculation class

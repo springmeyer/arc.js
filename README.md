@@ -9,7 +9,7 @@ Calculate great circle routes as lines in GeoJSON or WKT format.
 - Works in Node.js and browsers
 - Generates GeoJSON and WKT output formats
 - Handles dateline crossing automatically
-- Based on [Ed Williams' Aviation Formulary](https://edwilliams.org/avform.htm#Intermediate) algorithms and the GDAL source code
+- Based on [Ed Williams' Aviation Formulary](https://edwilliams.org/avform.htm#Intermediate) algorithms
 
 ## Installation
 
@@ -157,7 +157,3 @@ arc.js powers the [`greatCircle`](https://turfjs.org/docs/api/greatCircle) funct
 ## License
 
 This project is licensed under the BSD license. See [LICENSE.md](LICENSE) for details.
-
-### Third-Party Licenses
-
-This project includes code ported from GDAL (Geospatial Data Abstraction Library), which is licensed under the MIT/X11 license. See [GDAL-LICENSE.md](GDAL-LICENSE.md) for the full GDAL license text and attribution details.
