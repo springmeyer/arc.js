@@ -159,7 +159,7 @@ describe('GreatCircle', () => {
       const asia = { x: -170, y: 0 };
       
       const gc = new GreatCircle(pacific, asia);
-      const arc = gc.Arc(10, { offset: 5 });
+      const arc = gc.Arc(10);
       
       expect(arc.geometries.length).toBeGreaterThan(0);
       
@@ -168,12 +168,12 @@ describe('GreatCircle', () => {
       expect(json.type).toBe('Feature');
     });
 
-    test('should handle routes near dateline with high offset', () => {
+    test('should handle routes near dateline', () => {
       const nearDateline1 = { x: 175, y: 0 };
       const nearDateline2 = { x: -175, y: 0 };
-      
+
       const gc = new GreatCircle(nearDateline1, nearDateline2);
-      const arc = gc.Arc(5, { offset: 20 });
+      const arc = gc.Arc(5);
       
       expect(arc.geometries.length).toBeGreaterThan(0);
     });
@@ -183,7 +183,7 @@ describe('GreatCircle', () => {
       const lax = { x: -118.4085, y: 33.9416 };
       
       const gc = new GreatCircle(tokyo, lax);
-      const json = gc.Arc(100, { offset: 10 }).json();
+      const json = gc.Arc(100).json();
       
       expect(json.geometry.type).toBe('MultiLineString');
       const coords = (json.geometry as any).coordinates;
@@ -206,7 +206,7 @@ describe('GreatCircle', () => {
       const la = { x: -118.41, y: 33.94 };
       
       const gc = new GreatCircle(auckland, la);
-      const json = gc.Arc(100, { offset: 10 }).json();
+      const json = gc.Arc(100).json();
       
       expect(json.geometry.type).toBe('MultiLineString');
       const coords = (json.geometry as any).coordinates;
@@ -224,7 +224,7 @@ describe('GreatCircle', () => {
       const sfo = { x: -122.38, y: 37.62 };
       
       const gc = new GreatCircle(shanghai, sfo);
-      const json = gc.Arc(100, { offset: 10 }).json();
+      const json = gc.Arc(100).json();
       
       expect(json.geometry.type).toBe('MultiLineString');
       const coords = (json.geometry as any).coordinates;
@@ -242,7 +242,7 @@ describe('GreatCircle', () => {
       const lax = { x: -118.4085, y: 33.9416 };
       
       const gc = new GreatCircle(tokyo, lax);
-      const json = gc.Arc(100, { offset: 10 }).json();
+      const json = gc.Arc(100).json();
       const coords = (json.geometry as any).coordinates;
       
       for (const segment of coords) {

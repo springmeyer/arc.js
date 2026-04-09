@@ -64,12 +64,11 @@ const gc = new GreatCircle(start, end, { name: 'Seattle to DC' });
 
 #### 3. Generate the arc
 ```js
-const line = gc.Arc(100, { offset: 10 });
+const line = gc.Arc(100);
 ```
 
 **Parameters:**
 - `npoints` (number): Number of intermediate points (higher = more accurate)
-- `options.offset` (number): Dateline crossing threshold in degrees (default: 10)
 
 ### TypeScript Support
 
@@ -87,8 +86,7 @@ const end: CoordinatePoint = { x: -77, y: 39 };
 const properties: RouteProperties = { name: 'Seattle to DC', color: 'blue' };
 
 const gc = new GreatCircle(start, end, properties);
-const options: ArcOptions = { offset: 10 };
-const line = gc.Arc(100, options);
+const line = gc.Arc(100);
 
 // Fully typed return values
 const geojson = line.json(); // GeoJSONFeature
@@ -144,7 +142,7 @@ const wkt = line.wkt();
 
 ### Dateline Crossing
 
-The library automatically handles routes that cross the international dateline. The `offset` option (default: 10) controls how close to the dateline a route must be before it gets split into multiple segments. For routes near the poles, you may need a higher offset value.
+Routes that cross the international dateline are automatically detected and split into a `MultiLineString` with exact `±180°` boundary points. No configuration is needed.
 
 ## Examples
 
