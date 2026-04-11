@@ -12,11 +12,11 @@ npm test             # Run TypeScript tests
 
 ## Project Structure
 
-```
+```text
 src/
 ├── index.ts         # Main entry point
 ├── coord.ts         # Coordinate class
-├── arc.ts           # Arc class  
+├── arc.ts           # Arc class
 ├── great-circle.ts  # Great circle calculations
 ├── line-string.ts   # Internal geometry helper
 ├── utils.ts         # Utility functions
@@ -98,6 +98,18 @@ npm publish   # prepublishOnly runs npm run build automatically
 // ES Modules (Node.js or bundler)
 import { GreatCircle } from 'arc';
 ```
+
+## Visual Fixture Verification
+
+To inspect all test routes as great circle arcs on a map:
+
+```bash
+npm run build                            # dist/ must exist
+node scripts/dump-fixtures.mjs | pbcopy  # macOS: copy to clipboard
+```
+
+Then, paste the geojson output into a visualization tool to visually verify routes, such as [geojson.io](https://geojson.io).
+**Note:** route coordinates in the script are manually updated to keep in sync with `test/fixtures/routes.ts`.
 
 ## Common Tasks
 
