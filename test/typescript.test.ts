@@ -5,10 +5,11 @@
 
 import { Arc, Coord, GreatCircle, CoordinatePoint, ArcOptions, GeoJSONFeature } from '../src';
 import { expectTypeOf } from 'expect-type';
+import { SAN_FRANCISCO, NEW_YORK } from './fixtures/routes.js';
 
-// Test data with proper TypeScript typing
-const sanFrancisco: CoordinatePoint = { x: -122.4194, y: 37.7749 };
-const newYork: CoordinatePoint = { x: -74.0059, y: 40.7128 };
+// Typed as CoordinatePoint — the type annotation is part of the type-safety test
+const sanFrancisco: CoordinatePoint = SAN_FRANCISCO;
+const newYork: CoordinatePoint = NEW_YORK;
 const testProperties = {
   name: 'TypeScript Test Route',
   id: 'ts-001',
