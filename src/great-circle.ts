@@ -89,7 +89,7 @@ export class GreatCircle {
      * console.log(greatCircle.Arc(10)); // Arc { geometries: [ [Array] ] }
      * ```
      */
-    Arc(npoints?: number, _options?: ArcOptions): Arc {
+    Arc(npoints: number = 100, _options?: ArcOptions): Arc {
         // NOTE: With npoints ≤ 2, no antimeridian splitting is performed.
         // A 2-point antimeridian route returns a single LineString spanning ±180°.
         // Renderers that support coordinate wrapping (e.g. MapLibre GL JS) handle this
