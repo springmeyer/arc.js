@@ -1,55 +1,9 @@
-import { GreatCircle, CoordinatePoint } from '../src';
+import { GreatCircle } from '../src';
 import type { MultiLineString, LineString } from 'geojson';
-
-// Complex real-world routes for integration testing
-interface TestRoute {
-  start: CoordinatePoint;
-  end: CoordinatePoint;
-  properties: { name: string };
-  crossesAntimeridian: boolean;
-}
-
-const routes: TestRoute[] = [
-  {
-    start: { x: -122, y: 48 },
-    end: { x: -77, y: 39 },
-    properties: { name: 'Seattle → DC' },
-    crossesAntimeridian: false
-  },
-  {
-    start: { x: -122, y: 48 },
-    end: { x: 0, y: 51 },
-    properties: { name: 'Seattle → London' },
-    crossesAntimeridian: false
-  },
-  {
-    start: { x: -75.9375, y: 35.460669951495305 },
-    end: { x: 146.25, y: -43.06888777416961 },
-    properties: { name: 'Pamlico Sound, NC, USA → Tasmania, Australia' },
-    crossesAntimeridian: true
-  },
-  {
-    start: { x: 145.54687500000003, y: 48.45835188280866 },
-    end: { x: -112.5, y: -37.71859032558814 },
-    properties: { name: 'Sea of Okhotsk, Russia → Southern Pacific Ocean' },
-    crossesAntimeridian: true
-  },
-  {
-    start: { x: -74.564208984375, y: -0.17578097424708533 },
-    end: { x: 137.779541015625, y: -22.75592068148639 },
-    properties: { name: 'Colombia/Peru border → Northern Territory, Australia' },
-    crossesAntimeridian: true
-  },
-  {
-    start: { x: -66.829833984375, y: -18.81271785640776 },
-    end: { x: 118.795166015625, y: -20.797201434306984 },
-    properties: { name: 'Challapata, Bolivia → Western Australia, Australia' },
-    crossesAntimeridian: true
-  }
-];
+import { INTEGRATION_ROUTES } from './fixtures/routes.js';
 
 // Exact snapshots for non-crossing routes only.
-// Splitting correctness for crossing routes (indices 2–5) is owned by antimeridian.test.ts.
+// Splitting correctness for crossing routes is owned by antimeridian.test.ts.
 // Integration tests verify output format and property pass-through.
 const expectedArcs = [
   {
@@ -83,7 +37,7 @@ const expectedWkts = [
 
 describe('Integration', () => {
   describe('Complex routes with dateline crossing', () => {
-    routes.forEach((route, idx) => {
+    INTEGRATION_ROUTES.forEach((route, idx) => {
       test(`Route ${idx} (${route.properties.name}) should match expected output`, () => {
         const gc = new GreatCircle(route.start, route.end, route.properties);
         const line = gc.Arc(3);
@@ -106,7 +60,7 @@ describe('Integration', () => {
   });
 
   describe('GeoJSON output validation', () => {
-    routes.forEach((route, idx) => {
+    INTEGRATION_ROUTES.forEach((route, idx) => {
       test(`Route ${idx} (${route.properties.name}) should produce valid GeoJSON`, () => {
         const gc = new GreatCircle(route.start, route.end, route.properties);
         const line = gc.Arc(3);
@@ -126,7 +80,7 @@ describe('Integration', () => {
   });
 
   describe('Southern hemisphere routes', () => {
-    const southernRoutes = routes.filter(route =>
+    const southernRoutes = INTEGRATION_ROUTES.filter(route =>
       route.start.y < 0 || route.end.y < 0
     );
 
@@ -153,7 +107,7 @@ describe('Integration', () => {
 
   describe('Full workflow test', () => {
     test('should complete full workflow from coordinates to output formats', () => {
-      const testRoute = routes[0]!; // Seattle → DC
+      const testRoute = INTEGRATION_ROUTES[0]!; // Seattle → DC
 
       const gc = new GreatCircle(testRoute.start, testRoute.end, testRoute.properties);
       const line = gc.Arc(3);

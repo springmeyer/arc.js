@@ -4,9 +4,9 @@ import type { Position } from 'geojson';
 
 /**
  * Arc class representing the result of great circle calculations
- * 
+ *
  * @param properties - Optional properties object
- * 
+ *
  * @example
  * ```typescript
  * const arc = new Arc({ x: 45.123456789, y: 50.987654321 });
@@ -23,14 +23,14 @@ export class Arc {
 
     /**
      * Convert to GeoJSON Feature
-     * 
+     *
      * @returns GeoJSON Feature with LineString or MultiLineString geometry
-     * 
+     *
      * @example
      * ```typescript
      * const gc = new GreatCircle({x: -122, y: 48}, {x: -77, y: 39});
      * const arc = gc.Arc(3);
-     * console.log(arc.json()); 
+     * console.log(arc.json());
      * // { type: 'Feature', geometry: { type: 'LineString', coordinates: [[-122, 48], [-99.5, 43.5], [-77, 39]] }, properties: {} }
      * ```
      */
@@ -39,8 +39,7 @@ export class Arc {
         if (this.geometries.length === 0) {
             return {
                 type: 'Feature',
-                // NOTE: coordinates: null is non-standard GeoJSON (RFC 7946 specifies empty array [])
-                // but maintained for backward compatibility with original arc.js behavior
+                // NOTE: coordinates: null is non-standard GeoJSON (RFC 7946 specifies empty array []) but maintained for backward compatibility with original arc.js behavior.
                 geometry: { type: 'LineString', coordinates: null as any },
                 properties: this.properties
             };
@@ -78,9 +77,9 @@ export class Arc {
 
     /**
      * Convert to WKT (Well Known Text) format
-     * 
+     *
      * @returns WKT string representation
-     * 
+     *
      * @example
      * ```typescript
      * const arc = new Arc({ name: 'test-arc' });
@@ -93,7 +92,7 @@ export class Arc {
         }
 
         let wktParts: string[] = [];
-        
+
         for (const geometry of this.geometries) {
             if (!geometry || geometry.coords.length === 0) {
                 wktParts.push('LINESTRING EMPTY');

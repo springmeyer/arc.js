@@ -334,11 +334,6 @@
                 </div>
                 
                 <div class="control-group">
-                    <label for="offset">Dateline offset (degrees):</label>
-                    <input type="number" id="offset" value="20" min="1" max="90" step="1" />
-                </div>
-
-                <div class="control-group">
                     <button id="clear" class="btn">Clear All</button>
                     <button id="reset" class="btn btn-danger">Reset View</button>
                 </div>
@@ -377,7 +372,6 @@
 
         // Configuration
         var npoints = 100;
-        var offset = 20;
         var coords = [];
         var points = [];
         var snap_tolerance = 500000;
@@ -388,10 +382,6 @@
         // Update controls when values change
         document.getElementById('npoints').addEventListener('change', function() {
             npoints = parseInt(this.value) || 100;
-        });
-
-        document.getElementById('offset').addEventListener('change', function() {
-            offset = parseInt(this.value) || 20;
         });
 
         var start, end;
@@ -469,7 +459,7 @@
                     };
                     
                     var greatCircle = new GreatCircle(from, to, properties);
-                    var gc = greatCircle.Arc(npoints, { offset: offset });
+                    var gc = greatCircle.Arc(npoints);
                     var line = new L.geoJson().addTo(map);
                     var geojson_feature = gc.json();
                     
@@ -592,7 +582,7 @@
             
             try {
                 var greatCircle = new GreatCircle(nyc, london, properties);
-                var gc = greatCircle.Arc(npoints, { offset: offset });
+                var gc = greatCircle.Arc(npoints);
                 var line = new L.geoJson().addTo(map);
                 var geojson_feature = gc.json();
                 
