@@ -97,7 +97,7 @@ export class GreatCircle {
     Arc(npoints: number = 100, _options?: ArcOptions): Arc {
         // NOTE: With npoints ≤ 2, no antimeridian splitting is performed.
         // A 2-point antimeridian route returns a single LineString spanning ±180°. Renderers that support coordinate wrapping (e.g. MapLibre GL JS) handle this correctly, whereas splitting would produce two disconnected straight-line stubs with no great-circle curvature — arguably worse behavior. This is a known limitation; open for maintainer discussion if a MultiLineString split is preferred.
-        if (!npoints || npoints <= 2) {
+        if (npoints <= 2) {
             const arc = new Arc(this.properties);
             const line = new _LineString();
             arc.geometries.push(line);

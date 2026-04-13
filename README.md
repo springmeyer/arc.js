@@ -40,8 +40,8 @@ const line = gc.Arc(100);
 ```html
 <script type="module">
   import { GreatCircle } from 'https://cdn.skypack.dev/arc@1';
-  const gc = new arc.GreatCircle({x: -122, y: 48}, {x: -77, y: 39});
-  const line = gc.Arc(100);
+  const gc = new GreatCircle({x: -122, y: 48}, {x: -77, y: 39});
+  const line = gc.Arc();
 </script>
 ```
 

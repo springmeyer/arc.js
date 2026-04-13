@@ -75,6 +75,7 @@ npm publish   # prepublishOnly runs npm run build automatically
 ### What Gets Published
 
 - `dist/` folder (compiled ESM JS + TypeScript definitions)
+- `src/` folder (TypeScript source files)
 - `README.md`, `LICENSE.md`, `CHANGELOG.md`
 
 ## TypeScript Development
