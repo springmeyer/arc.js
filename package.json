@@ -30,8 +30,7 @@
     "dist/",
     "README.md",
     "LICENSE.md",
-    "GDAL-LICENSE.md",
-    "CHANGELOG.md"
+"CHANGELOG.md"
   ],
   "engines": {
     "node": ">=18"
