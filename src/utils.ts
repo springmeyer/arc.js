@@ -2,10 +2,10 @@ import type { Position } from './types.js';
 
 /**
  * Round coordinate decimal values to 6 places for precision
- * 
+ *
  * @param coords - A coordinate position (longitude, latitude, optional elevation)
  * @returns Rounded coordinate position
- * 
+ *
  * @example
  * ```typescript
  * const coords = [45.123456789, 50.987654321];
@@ -22,7 +22,7 @@ export function roundCoords(coords: Position): Position {
     for (let i = 0; i < coords.length; i++) {
         const coord = coords[i];
         if (coord !== undefined) {
-            // https://stackoverflow.com/questions/11832914/how-to-round-to-at-most-2-decimal-places-if-necessary
+            // NOTE: This logic follows https://stackoverflow.com/questions/11832914/how-to-round-to-at-most-2-decimal-places-if-necessary
             rounded[i] = Math.round(
                 (coord + Number.EPSILON) * MULTIPLIER
             ) / MULTIPLIER;

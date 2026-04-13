@@ -9,7 +9,7 @@ Calculate great circle routes as lines in GeoJSON or WKT format.
 - Works in Node.js and browsers
 - Generates GeoJSON and WKT output formats
 - Handles dateline crossing automatically
-- Based on [Ed Williams' Aviation Formulary](https://edwilliams.org/avform.htm#Intermediate) algorithms and the GDAL source code
+- Based on [Ed Williams' Aviation Formulary](https://edwilliams.org/avform.htm#Intermediate) algorithms
 
 ## Installation
 
@@ -22,7 +22,7 @@ npm install arc
 ```js
 import { GreatCircle } from 'arc';
 const gc = new GreatCircle({x: -122, y: 48}, {x: -77, y: 39});
-const line = gc.Arc(100);
+const line = gc.Arc(); // npoints is optional, defaults to 100
 console.log(line.json()); // GeoJSON output
 ```
 
@@ -40,8 +40,8 @@ const line = gc.Arc(100);
 ```html
 <script type="module">
   import { GreatCircle } from 'https://cdn.skypack.dev/arc@1';
-  const gc = new arc.GreatCircle({x: -122, y: 48}, {x: -77, y: 39});
-  const line = gc.Arc(100);
+  const gc = new GreatCircle({x: -122, y: 48}, {x: -77, y: 39});
+  const line = gc.Arc();
 </script>
 ```
 
@@ -64,12 +64,12 @@ const gc = new GreatCircle(start, end, { name: 'Seattle to DC' });
 
 #### 3. Generate the arc
 ```js
-const line = gc.Arc(100, { offset: 10 });
+const line = gc.Arc();      // defaults to 100 points
+const line = gc.Arc(500);   // or specify a custom value
 ```
 
 **Parameters:**
-- `npoints` (number): Number of intermediate points (higher = more accurate)
-- `options.offset` (number): Dateline crossing threshold in degrees (default: 10)
+- `npoints` (number, optional): Number of intermediate points (higher = more precise, default: 100)
 
 ### TypeScript Support
 
@@ -87,8 +87,7 @@ const end: CoordinatePoint = { x: -77, y: 39 };
 const properties: RouteProperties = { name: 'Seattle to DC', color: 'blue' };
 
 const gc = new GreatCircle(start, end, properties);
-const options: ArcOptions = { offset: 10 };
-const line = gc.Arc(100, options);
+const line = gc.Arc(); // npoints is optional, defaults to 100
 
 // Fully typed return values
 const geojson = line.json(); // GeoJSONFeature
@@ -144,7 +143,7 @@ const wkt = line.wkt();
 
 ### Dateline Crossing
 
-The library automatically handles routes that cross the international dateline. The `offset` option (default: 10) controls how close to the dateline a route must be before it gets split into multiple segments. For routes near the poles, you may need a higher offset value.
+Routes that cross the international dateline are automatically detected and split into a `MultiLineString` with exact `±180°` boundary points. No configuration is needed.
 
 ## Examples
 
@@ -157,7 +156,3 @@ arc.js powers the [`greatCircle`](https://turfjs.org/docs/api/greatCircle) funct
 ## License
 
 This project is licensed under the BSD license. See [LICENSE.md](LICENSE) for details.
-
-### Third-Party Licenses
-
-This project includes code ported from GDAL (Geospatial Data Abstraction Library), which is licensed under the MIT/X11 license. See [GDAL-LICENSE.md](GDAL-LICENSE.md) for the full GDAL license text and attribution details.

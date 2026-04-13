@@ -20,11 +20,12 @@ export interface CoordinatePoint {
  * Options for Arc generation
  */
 export interface ArcOptions {
-  /** 
-   * Offset from dateline in degrees (default: 10)
-   * Controls the likelihood that lines will be split which cross the dateline.
-   * The higher the number the more likely. Lines within this many degrees 
-   * of the dateline will be split.
+  /**
+   * @deprecated No-op. Retained for backwards compatibility.
+   *
+   * Previously controlled the dateline offset threshold used by the GDAL-ported
+   * heuristic. The heuristic has since been replaced with an analytical bisection
+   * approach — this field has no effect on output.
    */
   offset?: number;
 }
