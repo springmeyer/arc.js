@@ -5,11 +5,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
-## [1.0.0] - 2026-03-29
+## [1.0.0] - 2026-04-12
 
 ### Breaking change
 
-- arc.js is now a [pure](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c) ESM package. 
+- arc.js is now a [pure](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c) ESM package (from @jgravois).
 
 If you need to `require()` arc.js as CJS (CommonJS), or have a runtime older than Node.js 18, please use `0.1.4`.
 
@@ -27,7 +27,22 @@ const gc = new GreatCircle(/* */);
 
 ### Fixed
 
-- antimeridian splitting in GreatCircle.Arc (From @copilot)
+- Antimeridian splitting in GreatCircle.Arc (from @thomas-hervey)
+
+### Changed
+
+- `GreatCircle.Arc()` now defaults to `npoints = 100` — calling `gc.Arc()` with no arguments produces a smooth 100-point arc instead of a 2-point stub
+- Antimeridian splitting now uses analytical bisection (binary search on `interpolate()`) instead of the GDAL-ported linear heuristic. This approach is more accurate, especially at high latitudes and low `npoints` values
+- `ArcOptions.offset` is now a no-op (kept for backwards compatibility); antimeridian handling is fully automatic
+
+### Removed
+
+- GDAL license file (`GDAL-LICENSE.md`). No GDAL-derived code remains in the codebase
+
+### Added
+
+- `scripts/benchmark.mjs` benchmarks bisection vs. prior linear approach across npoints and route types
+- `scripts/dump-fixtures.mjs` exports all test routes as GeoJSON for use in visual verification (such as [https://geojson.io](https://geojson.io) or the index.html demo page)
 
 ## [0.2.0] - 2025-09-22
 ### Breaking
