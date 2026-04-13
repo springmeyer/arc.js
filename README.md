@@ -22,7 +22,7 @@ npm install arc
 ```js
 import { GreatCircle } from 'arc';
 const gc = new GreatCircle({x: -122, y: 48}, {x: -77, y: 39});
-const line = gc.Arc(100);
+const line = gc.Arc(); // npoints is optional, defaults to 100
 console.log(line.json()); // GeoJSON output
 ```
 
@@ -64,11 +64,12 @@ const gc = new GreatCircle(start, end, { name: 'Seattle to DC' });
 
 #### 3. Generate the arc
 ```js
-const line = gc.Arc(100);
+const line = gc.Arc();      // defaults to 100 points
+const line = gc.Arc(500);   // or specify a custom value
 ```
 
 **Parameters:**
-- `npoints` (number): Number of intermediate points (higher = more accurate)
+- `npoints` (number, optional): Number of intermediate points (higher = more precise, default: 100)
 
 ### TypeScript Support
 
@@ -86,7 +87,7 @@ const end: CoordinatePoint = { x: -77, y: 39 };
 const properties: RouteProperties = { name: 'Seattle to DC', color: 'blue' };
 
 const gc = new GreatCircle(start, end, properties);
-const line = gc.Arc(100);
+const line = gc.Arc(); // npoints is optional, defaults to 100
 
 // Fully typed return values
 const geojson = line.json(); // GeoJSONFeature
