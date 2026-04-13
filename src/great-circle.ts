@@ -4,15 +4,20 @@ import { Arc } from './arc.js';
 import { _LineString } from './line-string.js';
 import { roundCoords, R2D } from './utils.js';
 
+// Number of bisection iterations used to locate the antimeridian crossing.
+// More iterations = higher precision but more interpolate() calls.
+// 50 iterations yields sub-degree precision, which is more than sufficient for most web mapping applications (i.e., not survey grade).
+const ANTIMERIDIAN_BISECTION_ITERATIONS = 50;
+
 
 /**
  * Great Circle calculation class
  * http://en.wikipedia.org/wiki/Great-circle_distance
- * 
+ *
  * @param start - Start point
  * @param end - End point
  * @param properties - Optional properties object
- * 
+ *
  * @example
  * ```typescript
  * const greatCircle = new GreatCircle({ x: 45.123456789, y: 50.987654321 }, { x: 46.123456789, y: 51.987654321 });
@@ -32,7 +37,7 @@ export class GreatCircle {
         if (!end || end.x === undefined || end.y === undefined) {
             throw new Error("GreatCircle constructor expects two args: start and end objects with x and y properties");
         }
-        
+
         this.start = new Coord(start.x, start.y);
         this.end = new Coord(end.x, end.y);
         this.properties = properties || {};
@@ -55,10 +60,10 @@ export class GreatCircle {
     /**
      * Interpolate along the great circle
      * http://williams.best.vwh.net/avform.htm#Intermediate
-     * 
+     *
      * @param f - Interpolation factor
      * @returns Interpolated point
-     * 
+     *
      * @example
      * ```typescript
      * const greatCircle = new GreatCircle({ x: 45.123456789, y: 50.987654321 }, { x: 46.123456789, y: 51.987654321 });
@@ -78,11 +83,11 @@ export class GreatCircle {
 
     /**
      * Generate points along the great circle
-     * 
+     *
      * @param npoints - Number of points to generate
      * @param options - Optional options object
      * @returns Arc object
-     * 
+     *
      * @example
      * ```typescript
      * const greatCircle = new GreatCircle({ x: 45.123456789, y: 50.987654321 }, { x: 46.123456789, y: 51.987654321 });
@@ -91,11 +96,7 @@ export class GreatCircle {
      */
     Arc(npoints: number = 100, _options?: ArcOptions): Arc {
         // NOTE: With npoints ≤ 2, no antimeridian splitting is performed.
-        // A 2-point antimeridian route returns a single LineString spanning ±180°.
-        // Renderers that support coordinate wrapping (e.g. MapLibre GL JS) handle this
-        // correctly, whereas splitting would produce two disconnected straight-line stubs
-        // with no great-circle curvature — arguably worse behavior. This is a known
-        // limitation; open for maintainer discussion if a MultiLineString split is preferred.
+        // A 2-point antimeridian route returns a single LineString spanning ±180°. Renderers that support coordinate wrapping (e.g. MapLibre GL JS) handle this correctly, whereas splitting would produce two disconnected straight-line stubs with no great-circle curvature — arguably worse behavior. This is a known limitation; open for maintainer discussion if a MultiLineString split is preferred.
         if (!npoints || npoints <= 2) {
             const arc = new Arc(this.properties);
             const line = new _LineString();
@@ -105,19 +106,16 @@ export class GreatCircle {
             return arc;
         }
 
-        // NOTE: options.offset was previously used as dfDateLineOffset in the GDAL-ported
-        // heuristic. It is kept in ArcOptions for backwards compatibility but is a no-op here.
+        // NOTE: options.offset was previously used as dfDateLineOffset in the GDAL-ported heuristic. It is kept in ArcOptions for backwards compatibility but is a no-op here.
 
+        // Sample npoints evenly spaced positions along the great circle arc.
         const delta = 1.0 / (npoints - 1);
         const first_pass: [number, number][] = [];
         for (let i = 0; i < npoints; ++i) {
             first_pass.push(this.interpolate(delta * i));
         }
 
-        // Analytical antimeridian splitting via bisection.
-        // For each consecutive pair of points where |Δlon| > 180 (opposite sides of ±180°),
-        // binary-search for the exact crossing fraction f* using interpolate(), then insert
-        // [±180, lat*] boundary points and start a new segment. 50 iterations → sub-nanodegree precision.
+        // Walk the sampled points, splitting into segments wherever the arc crosses the antimeridian.
         const segments: [number, number][][] = [];
         let current: [number, number][] = [];
 
@@ -131,14 +129,17 @@ export class GreatCircle {
 
             const prev = first_pass[i - 1]!;
 
+            // A longitude jump > 180° between adjacent samples indicates an antimeridian crossing.
             if (Math.abs(pt[0] - prev[0]) > 180) {
+                // Bisect to find the interpolation fraction f* at which the arc crosses ±180°.
                 let lo = delta * (i - 1);
                 let hi = delta * i;
 
-                for (let iter = 0; iter < 50; iter++) {
+                for (let iter = 0; iter < ANTIMERIDIAN_BISECTION_ITERATIONS; iter++) {
                     const mid = (lo + hi) / 2;
                     const [midLon] = this.interpolate(mid);
                     const [loLon] = this.interpolate(lo);
+                    // If mid and lo are on the same side of ±180°, the crossing is in [mid, hi].
                     if (Math.abs(midLon - loLon) < 180) {
                         lo = mid;
                     } else {
@@ -146,6 +147,7 @@ export class GreatCircle {
                     }
                 }
 
+                // Compute the latitude at the crossing point and close/open segments at ±180°.
                 const [, crossingLat] = this.interpolate((lo + hi) / 2);
                 const fromEast = prev[0] > 0;
 
@@ -161,6 +163,7 @@ export class GreatCircle {
             segments.push(current);
         }
 
+        // Build one LineString per segment and collect them into an Arc.
         const arc = new Arc(this.properties);
         for (const seg of segments) {
             const line = new _LineString();
