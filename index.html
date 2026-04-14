@@ -351,8 +351,15 @@
             </div>
         </div>
     </div>
+    <script type="importmap">
+        {
+            "imports": {
+                "arc": "https://esm.sh/arc@1"
+            }
+        }
+    </script>
     <script type="module">
-        import { GreatCircle } from 'https://cdn.skypack.dev/arc@1';
+        import { GreatCircle } from "arc";
         
         // Initialize map
         var map = L.map('map').setView(new L.LatLng(0, 0), 2);
