@@ -21,7 +21,7 @@
     "type": "git",
     "url": "git://github.com/springmeyer/arc.js.git"
   },
-  "license": "BSD",
+  "license": "BSD-2-Clause",
   "type": "module",
   "exports": {
     "types": "./dist/index.d.ts",
